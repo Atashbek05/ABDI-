@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Threat Analytics | AI Phishing Detector</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:     #080810;
+      --bg2:    #0d0d1a;
+      --bg3:    #111120;
+      --border: rgba(255,255,255,0.07);
+      --text:   #c8c8d4;
+      --dim:    #555;
+      --red:    #ff1a1a;
+      --green:  #00cc66;
+      --orange: #ffaa00;
+      --blue:   #00aaff;
+      --red-a:  rgba(255,26,26,0.3);
+      --grn-a:  rgba(0,204,102,0.3);
+      --org-a:  rgba(255,170,0,0.3);
+      --blu-a:  rgba(0,170,255,0.3);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Courier New', 'Lucida Console', monospace;
+      font-size: 12px;
+      min-height: 100vh;
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────────────── */
+    .header {
+      background: linear-gradient(135deg, var(--bg2) 0%, var(--bg3) 100%);
+      border-bottom: 1px solid var(--red-a);
+      padding: 16px 28px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+
+    .header-icon { font-size: 28px; }
+
+    .header-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 2px;
+    }
+
+    .header-sub {
+      font-size: 9px;
+      color: #555;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .header-right {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .backend-pill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+    }
+
+    .backend-pill.online  { color: var(--green); border-color: var(--grn-a); background: rgba(0,204,102,0.08); }
+    .backend-pill.offline { color: #ff4444;       border-color: var(--red-a); background: rgba(255,68,68,0.08); }
+
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+    .backend-pill.online .status-dot { animation: blink 1.5s ease-in-out infinite; }
+
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .refresh-btn {
+      padding: 6px 14px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      color: #888;
+      font-family: inherit;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .refresh-btn:hover { background: rgba(255,255,255,0.1); color: #ccc; }
+    .refresh-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .last-updated {
+      font-size: 9px;
+      color: #333;
+      letter-spacing: 1px;
+    }
+
+    /* ── Layout ──────────────────────────────────────────────────────────────── */
+    .main {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 28px;
+    }
+
+    .section-title {
+      font-size: 9px;
+      color: var(--dim);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 16px;
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title:first-child { margin-top: 0; }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Stat cards ──────────────────────────────────────────────────────────── */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 14px;
+    }
+
+    .stat-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 22px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: var(--accent, var(--blue));
+      box-shadow: 0 0 12px var(--accent, var(--blue));
+    }
+
+    .stat-card:hover { border-color: rgba(255,255,255,0.14); transform: translateY(-1px); }
+
+    .stat-card.c-total    { --accent: var(--blue); }
+    .stat-card.c-phishing { --accent: var(--red); }
+    .stat-card.c-safe     { --accent: var(--green); }
+    .stat-card.c-susp     { --accent: var(--orange); }
+
+    .stat-icon    { font-size: 22px; margin-bottom: 12px; }
+    .stat-label   { font-size: 9px; color: var(--dim); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+    .stat-value   { font-size: 36px; font-weight: 700; color: var(--accent, #fff); line-height: 1; transition: all 0.5s ease; }
+    .stat-sub     { font-size: 9px; color: #444; margin-top: 8px; }
+
+    /* ── Charts ──────────────────────────────────────────────────────────────── */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 14px;
+    }
+
+    .chart-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .chart-label {
+      font-size: 9px;
+      color: #666;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 18px;
+    }
+
+    .chart-wrap { position: relative; }
+
+    /* ── Intelligence grid ───────────────────────────────────────────────────── */
+    .intel-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .intel-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px;
+    }
+
+    .intel-title {
+      font-size: 9px;
+      color: #666;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    .intel-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 4px;
+      margin-bottom: 6px;
+      font-size: 10px;
+      color: #bbb;
+      animation: fadeIn 0.3s ease both;
+    }
+
+    .intel-row.threat-row {
+      background: rgba(255,26,26,0.04);
+      border: 1px solid rgba(255,26,26,0.1);
+    }
+
+    .intel-row.info-row {
+      background: rgba(0,170,255,0.03);
+      border: 1px solid rgba(0,170,255,0.1);
+    }
+
+    .threat-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ff4444;
+      box-shadow: 0 0 6px rgba(255,68,68,0.6);
+      flex-shrink: 0;
+    }
+
+    /* ── Recent scans table ──────────────────────────────────────────────────── */
+    .table-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .table-head-bar {
+      padding: 14px 20px;
+      border-bottom: 1px solid var(--border);
+      font-size: 9px;
+      color: #555;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .scan-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .scan-table th {
+      text-align: left;
+      padding: 10px 20px;
+      font-size: 9px;
+      color: #333;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .scan-table td {
+      padding: 9px 20px;
+      font-size: 10px;
+      color: #777;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .scan-table tr:last-child td { border-bottom: none; }
+    .scan-table tr:hover td { background: rgba(255,255,255,0.02); color: #999; }
+
+    .url-cell {
+      max-width: 340px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* ── Risk badges ─────────────────────────────────────────────────────────── */
+    .risk-badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 8px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .risk-badge.rb-safe       { background: rgba(0,204,102,0.15); color: var(--green); border: 1px solid var(--grn-a); }
+    .risk-badge.rb-suspicious { background: rgba(255,170,0,0.15);  color: var(--orange); border: 1px solid var(--org-a); }
+    .risk-badge.rb-high       { background: rgba(255,26,26,0.15);  color: #ff4444; border: 1px solid var(--red-a); }
+
+    /* ── Confidence bar ──────────────────────────────────────────────────────── */
+    .conf-wrap { display: flex; align-items: center; gap: 8px; }
+
+    .conf-track {
+      width: 64px;
+      height: 4px;
+      background: rgba(255,255,255,0.07);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+
+    .conf-fill { height: 100%; border-radius: 2px; }
+    .conf-fill.safe       { background: var(--green); }
+    .conf-fill.suspicious { background: var(--orange); }
+    .conf-fill.high       { background: var(--red); }
+
+    /* ── States ──────────────────────────────────────────────────────────────── */
+    .state-msg {
+      text-align: center;
+      padding: 52px 20px;
+      color: #333;
+    }
+
+    .state-icon { font-size: 40px; margin-bottom: 14px; }
+
+    .state-title { font-size: 14px; color: #555; margin-bottom: 8px; }
+    .state-sub   { font-size: 10px; color: #333; }
+    .state-cmd   { font-size: 10px; color: #2a2a3a; margin-top: 10px; font-style: italic; }
+
+    /* ── Loading overlay ─────────────────────────────────────────────────────── */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(8,8,16,0.85);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      z-index: 200;
+      transition: opacity 0.3s ease;
+    }
+
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+
+    .spin-large {
+      width: 44px;
+      height: 44px;
+      border: 3px solid rgba(255,26,26,0.2);
+      border-top-color: var(--red);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin    { to { transform: rotate(360deg); } }
+    @keyframes fadeIn  { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+    @keyframes countUp { from { opacity: 0; } to { opacity: 1; } }
+
+    /* ── Responsive ──────────────────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .charts-grid { grid-template-columns: 1fr; }
+      .intel-grid  { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 600px) {
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .main { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Loading overlay -->
+  <div class="overlay" id="overlay">
+    <div class="spin-large"></div>
+    <div style="font-size:10px;color:#444;letter-spacing:3px;text-transform:uppercase">Loading Analytics…</div>
+  </div>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-icon">🛡</div>
+    <div>
+      <div class="header-title">THREAT ANALYTICS</div>
+      <div class="header-sub">AI Phishing Detection Dashboard</div>
+    </div>
+    <div class="header-right">
+      <span class="last-updated" id="lastUpdated"></span>
+      <div class="backend-pill offline" id="backendPill">
+        <div class="status-dot"></div>
+        <span id="backendPillLabel">Offline</span>
+      </div>
+      <button class="refresh-btn" id="refreshBtn">↺ Refresh</button>
+    </div>
+  </div>
+
+  <!-- Main content (hidden until data loads) -->
+  <div class="main" id="mainContent" style="display:none">
+
+    <!-- ─ Stats ─ -->
+    <div class="section-title">Detection Overview</div>
+    <div class="stat-grid">
+      <div class="stat-card c-total">
+        <div class="stat-icon">🌐</div>
+        <div class="stat-label">Total Scanned</div>
+        <div class="stat-value" id="sTotal">—</div>
+        <div class="stat-sub">All-time URL scans</div>
+      </div>
+      <div class="stat-card c-phishing">
+        <div class="stat-icon">🚨</div>
+        <div class="stat-label">Phishing Detected</div>
+        <div class="stat-value" id="sPhishing">—</div>
+        <div class="stat-sub" id="sPhishingPct">—% detection rate</div>
+      </div>
+      <div class="stat-card c-safe">
+        <div class="stat-icon">✔</div>
+        <div class="stat-label">Safe Sites</div>
+        <div class="stat-value" id="sSafe">—</div>
+        <div class="stat-sub" id="sSafePct">—% of total</div>
+      </div>
+      <div class="stat-card c-susp">
+        <div class="stat-icon">⚠</div>
+        <div class="stat-label">Suspicious</div>
+        <div class="stat-value" id="sSusp">—</div>
+        <div class="stat-sub" id="sAvgConf">Avg confidence: —%</div>
+      </div>
+    </div>
+
+    <!-- ─ Charts ─ -->
+    <div class="section-title">Threat Distribution &amp; Confidence Trends</div>
+    <div class="charts-grid">
+
+      <div class="chart-card">
+        <div class="chart-label">Detection Distribution</div>
+        <div class="chart-wrap" style="height:240px;display:flex;align-items:center;justify-content:center">
+          <canvas id="donutChart" style="max-height:240px"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-label">Recent Scan Confidence Levels (last 20)</div>
+        <div class="chart-wrap" style="height:240px">
+          <canvas id="barChart" style="max-height:240px"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ─ Intelligence ─ -->
+    <div class="section-title">Threat Intelligence</div>
+    <div class="intel-grid">
+
+      <div class="intel-card">
+        <div class="intel-title">⚠ Top Threat Indicators</div>
+        <div id="threatsList">
+          <div class="state-msg" style="padding:20px;font-size:10px;color:#333">No phishing threats recorded yet</div>
+        </div>
+      </div>
+
+      <div class="intel-card">
+        <div class="intel-title">🤖 AI Detection Statistics</div>
+        <div id="aiStats"></div>
+      </div>
+
+    </div>
+
+    <!-- ─ Recent scans ─ -->
+    <div class="section-title">Recent Scans</div>
+    <div class="table-card">
+      <div class="table-head-bar">
+        <span>📋 Scan History</span>
+        <span id="tableCount" style="color:#333">— entries</span>
+      </div>
+      <div id="tableBody">
+        <div class="state-msg" style="padding:32px">No scans yet</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Offline state -->
+  <div id="offlineState" style="display:none">
+    <div class="state-msg" style="padding:100px 20px">
+      <div class="state-icon">🔌</div>
+      <div class="state-title">Backend Offline</div>
+      <div class="state-sub">Start the detection server to view analytics</div>
+      <div class="state-cmd">uvicorn main:app --reload</div>
+    </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    // ── Config ────────────────────────────────────────────────────────────────
+    const API          = "http://127.0.0.1:8000";
+    const CACHE_TTL    = 30_000;   // 30 s local cache
+    const AUTO_REFRESH = 30_000;   // 30 s auto-refresh
+
+    // ── State ─────────────────────────────────────────────────────────────────
+    let statsCache   = null;
+    let historyCache = null;
+    let lastFetch    = 0;
+    let donutChart   = null;
+    let barChart     = null;
+
+    // ── Helpers ───────────────────────────────────────────────────────────────
+
+    const esc = str => String(str)
+      .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+    function relativeTime(iso) {
+      const s = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
+      if (s < 60)  return `${s}s ago`;
+      const m = Math.floor(s / 60);
+      if (m < 60)  return `${m}m ago`;
+      const h = Math.floor(m / 60);
+      if (h < 24)  return `${h}h ago`;
+      return new Date(iso).toLocaleDateString();
+    }
+
+    function truncateUrl(url, len = 60) {
+      try {
+        const p = new URL(url);
+        const s = p.hostname + p.pathname;
+        return s.length > len ? s.slice(0, len) + "…" : s;
+      } catch {
+        return url.length > len ? url.slice(0, len) + "…" : url;
+      }
+    }
+
+    function riskBadge(risk) {
+      const cls   = risk === "high" ? "rb-high" : risk === "suspicious" ? "rb-suspicious" : "rb-safe";
+      const label = risk === "high" ? "HIGH"    : risk === "suspicious" ? "SUSPICIOUS"    : "SAFE";
+      return `<span class="risk-badge ${cls}">${label}</span>`;
+    }
+
+    function pct(n, total) {
+      return total > 0 ? ((n / total) * 100).toFixed(1) : "0.0";
+    }
+
+    // ── Backend status ─────────────────────────────────────────────────────────
+
+    function setOnline(online) {
+      const pill  = document.getElementById("backendPill");
+      const label = document.getElementById("backendPillLabel");
+      pill.className  = `backend-pill ${online ? "online" : "offline"}`;
+      label.textContent = online ? "Online" : "Offline";
+    }
+
+    // ── Data fetching with cache ───────────────────────────────────────────────
+
+    async function fetchData(force = false) {
+      const now = Date.now();
+      if (!force && statsCache && historyCache && now - lastFetch < CACHE_TTL) {
+        return { stats: statsCache, history: historyCache, online: true };
+      }
+
+      try {
+        const [sRes, hRes] = await Promise.all([
+          fetch(`${API}/stats`,          { signal: AbortSignal.timeout(5000) }),
+          fetch(`${API}/history?limit=50`, { signal: AbortSignal.timeout(5000) }),
+        ]);
+
+        if (!sRes.ok || !hRes.ok) throw new Error("Non-200 response");
+
+        statsCache   = await sRes.json();
+        historyCache = await hRes.json();
+        lastFetch    = Date.now();
+        return { stats: statsCache, history: historyCache, online: true };
+      } catch {
+        // Return stale cache if available, otherwise null
+        return { stats: statsCache, history: historyCache, online: false };
+      }
+    }
+
+    // ── Stat counters ──────────────────────────────────────────────────────────
+
+    function animateNumber(el, target) {
+      const start    = parseInt(el.textContent) || 0;
+      const duration = 600;
+      const startTs  = performance.now();
+      const step = ts => {
+        const progress = Math.min((ts - startTs) / duration, 1);
+        el.textContent = Math.round(start + (target - start) * progress);
+        if (progress < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+
+    function renderStats(stats) {
+      const total = stats.total_scanned    || 0;
+      const ph    = stats.phishing_detected || 0;
+      const sf    = stats.safe_detected    || 0;
+      const su    = stats.suspicious_detected || 0;
+
+      animateNumber(document.getElementById("sTotal"),    total);
+      animateNumber(document.getElementById("sPhishing"), ph);
+      animateNumber(document.getElementById("sSafe"),     sf);
+      animateNumber(document.getElementById("sSusp"),     su);
+
+      document.getElementById("sPhishingPct").textContent = `${pct(ph, total)}% detection rate`;
+      document.getElementById("sSafePct").textContent     = `${pct(sf, total)}% of total`;
+      document.getElementById("sAvgConf").textContent     = `Avg confidence: ${stats.average_confidence || 0}%`;
+    }
+
+    // ── Threat indicators ──────────────────────────────────────────────────────
+
+    function renderThreats(stats) {
+      const el = document.getElementById("threatsList");
+      const threats = stats.most_common_threats || [];
+      if (threats.length === 0) {
+        el.innerHTML = '<div style="padding:16px;font-size:10px;color:#333;text-align:center">No phishing threats recorded yet</div>';
+        return;
+      }
+      el.innerHTML = threats.map((t, i) =>
+        `<div class="intel-row threat-row" style="animation-delay:${i * 60}ms">
+          <span class="threat-dot"></span>${esc(t)}
+        </div>`
+      ).join("");
+    }
+
+    // ── AI stats panel ─────────────────────────────────────────────────────────
+
+    function renderAiStats(stats) {
+      const total = stats.total_scanned    || 0;
+      const ph    = stats.phishing_detected || 0;
+      const sf    = stats.safe_detected    || 0;
+
+      const items = [
+        { icon: "🌐", label: "Total URLs Analysed",  value: total },
+        { icon: "🎯", label: "Threat Detection Rate", value: `${pct(ph, total)}%` },
+        { icon: "📊", label: "Average Confidence",    value: `${stats.average_confidence || 0}%` },
+        { icon: "✅", label: "Safe Site Rate",         value: `${pct(sf, total)}%` },
+        { icon: "⚠",  label: "Suspicious Flags",      value: stats.suspicious_detected || 0 },
+      ];
+
+      document.getElementById("aiStats").innerHTML = items.map((item, i) =>
+        `<div class="intel-row info-row" style="animation-delay:${i * 50}ms">
+          <span style="font-size:14px">${item.icon}</span>
+          <span style="flex:1;color:#777">${esc(item.label)}</span>
+          <span style="color:var(--blue);font-weight:700">${esc(String(item.value))}</span>
+        </div>`
+      ).join("");
+    }
+
+    // ── Charts ─────────────────────────────────────────────────────────────────
+
+    const CHART_DEFAULTS = {
+      color: "#555",
+      font:  { family: "'Courier New', monospace", size: 10 },
+    };
+
+    function buildDonut(stats) {
+      const ctx = document.getElementById("donutChart").getContext("2d");
+      if (donutChart) donutChart.destroy();
+
+      donutChart = new Chart(ctx, {
+        type: "doughnut",
+        data: {
+          labels: ["Safe", "Suspicious", "Phishing"],
+          datasets: [{
+            data: [
+              stats.safe_detected       || 0,
+              stats.suspicious_detected || 0,
+              stats.phishing_detected   || 0,
+            ],
+            backgroundColor: [
+              "rgba(0,204,102,0.75)",
+              "rgba(255,170,0,0.75)",
+              "rgba(255,26,26,0.75)",
+            ],
+            borderColor: ["#00cc66", "#ffaa00", "#ff1a1a"],
+            borderWidth: 1,
+            hoverOffset: 6,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          cutout: "68%",
+          plugins: {
+            legend: {
+              position: "bottom",
+              labels: { color: "#777", font: CHART_DEFAULTS.font, padding: 14, boxWidth: 12 },
+            },
+            tooltip: {
+              backgroundColor: "#0d0d1a",
+              titleColor: "#ccc",
+              bodyColor: "#888",
+              borderColor: "rgba(255,255,255,0.1)",
+              borderWidth: 1,
+              callbacks: {
+                label(ctx) {
+                  const total = ctx.dataset.data.reduce((a, b) => a + b, 0);
+                  const p = total > 0 ? ((ctx.parsed / total) * 100).toFixed(1) : 0;
+                  return ` ${ctx.parsed} URLs (${p}%)`;
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    function buildBar(scans) {
+      const ctx = document.getElementById("barChart").getContext("2d");
+      if (barChart) barChart.destroy();
+
+      // Show last 20 scans in chronological order
+      const recent = [...scans].reverse().slice(-20);
+      if (recent.length === 0) return;
+
+      const bgColors = recent.map(s =>
+        s.risk_level === "high"       ? "rgba(255,26,26,0.75)"  :
+        s.risk_level === "suspicious" ? "rgba(255,170,0,0.75)"  :
+                                        "rgba(0,204,102,0.75)"
+      );
+
+      barChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: recent.map((_, i) => `#${i + 1}`),
+          datasets: [{
+            label: "Confidence %",
+            data: recent.map(s => s.confidence),
+            backgroundColor: bgColors,
+            borderColor: bgColors.map(c => c.replace("0.75", "1")),
+            borderWidth: 1,
+            borderRadius: 3,
+          }],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              ticks: { color: "#444", font: CHART_DEFAULTS.font },
+              grid:  { color: "rgba(255,255,255,0.04)" },
+            },
+            y: {
+              min: 0, max: 100,
+              ticks: {
+                color: "#444",
+                font: CHART_DEFAULTS.font,
+                callback: v => `${v}%`,
+              },
+              grid: { color: "rgba(255,255,255,0.04)" },
+            },
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              backgroundColor: "#0d0d1a",
+              titleColor: "#ccc",
+              bodyColor: "#888",
+              borderColor: "rgba(255,255,255,0.1)",
+              borderWidth: 1,
+              callbacks: {
+                title(items) {
+                  return truncateUrl(recent[items[0].dataIndex].url, 50);
+                },
+                label(item) {
+                  const s = recent[item.dataIndex];
+                  return [
+                    ` Confidence: ${Number(item.raw).toFixed(1)}%`,
+                    ` Risk: ${s.risk_level.toUpperCase()}`,
+                    ` ${relativeTime(s.timestamp)}`,
+                  ];
+                },
+              },
+            },
+          },
+        },
+      });
+    }
+
+    // ── Table ──────────────────────────────────────────────────────────────────
+
+    function renderTable(scans) {
+      const container = document.getElementById("tableBody");
+      document.getElementById("tableCount").textContent = `${scans.length} entries`;
+
+      if (scans.length === 0) {
+        container.innerHTML = '<div class="state-msg" style="padding:32px">No scans recorded yet</div>';
+        return;
+      }
+
+      const rows = scans.map(s => {
+        const fillCls = s.risk_level === "high" ? "high" : s.risk_level === "suspicious" ? "suspicious" : "safe";
+        return `<tr>
+          <td class="url-cell" title="${esc(s.url)}">${esc(truncateUrl(s.url))}</td>
+          <td>${riskBadge(s.risk_level)}</td>
+          <td>
+            <div class="conf-wrap">
+              <div class="conf-track">
+                <div class="conf-fill ${fillCls}" style="width:${Math.min(s.confidence, 100)}%"></div>
+              </div>
+              ${s.confidence.toFixed(1)}%
+            </div>
+          </td>
+          <td style="white-space:nowrap;color:#444">${relativeTime(s.timestamp)}</td>
+        </tr>`;
+      }).join("");
+
+      container.innerHTML = `
+        <table class="scan-table">
+          <thead>
+            <tr>
+              <th>URL</th>
+              <th>Risk</th>
+              <th>Confidence</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>`;
+    }
+
+    // ── Main render ────────────────────────────────────────────────────────────
+
+    async function render(force = false) {
+      const btn = document.getElementById("refreshBtn");
+      btn.disabled = true;
+      btn.textContent = "↺ Loading…";
+
+      const { stats, history, online } = await fetchData(force);
+
+      btn.disabled = false;
+      btn.textContent = "↺ Refresh";
+      setOnline(online);
+
+      // Dismiss loading overlay with fade
+      const overlay = document.getElementById("overlay");
+      overlay.classList.add("hidden");
+      setTimeout(() => { overlay.style.display = "none"; }, 300);
+
+      if (!online && !stats) {
+        document.getElementById("mainContent").style.display  = "none";
+        document.getElementById("offlineState").style.display = "block";
+        return;
+      }
+
+      document.getElementById("offlineState").style.display = "none";
+      document.getElementById("mainContent").style.display  = "block";
+
+      const now = new Date().toLocaleTimeString();
+      document.getElementById("lastUpdated").textContent = `Updated ${now}`;
+
+      if (stats) {
+        renderStats(stats);
+        renderThreats(stats);
+        renderAiStats(stats);
+        buildDonut(stats);
+      }
+
+      if (history) {
+        renderTable(history.scans || []);
+        if ((history.scans || []).length > 0) {
+          buildBar(history.scans);
+        }
+      }
+    }
+
+    // ── Bootstrap ─────────────────────────────────────────────────────────────
+
+    document.getElementById("refreshBtn").addEventListener("click", () => render(true));
+
+    render();
+    setInterval(() => render(), AUTO_REFRESH);
+  </script>
+</body>
+</html>

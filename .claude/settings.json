@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(New-Item -ItemType Directory -Path \"d:\\\\AI\\\\phishing-extension\" -Force)",
+      "PowerShell(New-Item -ItemType Directory -Path \"d:\\\\AI\\\\phishing-extension\\\\icons\" -Force)",
+      "PowerShell(Get-ChildItem -Path \"d:\\\\AI\" -Recurse -Force | Select-Object FullName, @{Name=\"Type\"; Expression={if \\($_.PSIsContainer\\) { \"DIR\" } else { \"FILE\" }}} | Sort-Object FullName)",
+      "Bash(Get-ChildItem d:\\\\AI\\\\phishing-extension)",
+      "Bash(Select-Object Name, Length, LastWriteTime)",
+      "Bash(Get-ChildItem -Path \"d:\\\\AI\" -Recurse -Force)",
+      "Bash(Select-Object FullName)",
+      "PowerShell(head -200)",
+      "PowerShell(Head 50)",
+      "PowerShell(Get-ChildItem \"d:\\\\AI\" -Recurse | Where-Object { !$_.PSIsContainer } | Select-Object FullName | Sort-Object FullName)",
+      "PowerShell(python -c \"import json; d = json.load\\(open\\('d:/AI/extension/manifest.json'\\)\\); print\\('MV:', d['manifest_version']\\); print\\('Name:', d['name']\\); print\\('Perms:', d['permissions']\\)\")",
+      "Bash(awk '{print NR\". \"$0}')",
+      "Bash(Get-ChildItem -Path \"d:\\\\AI\" -Recurse -File)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Sort-Object)",
+      "Bash(python -m ml.train_model)",
+      "Bash(python -c ' *)"
+    ],
+    "additionalDirectories": [
+      "d:\\AI\\backend"
+    ]
+  }
+}

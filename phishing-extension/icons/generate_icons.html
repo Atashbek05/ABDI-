@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<!--
+  ICON GENERATOR — open in a browser to download icon PNGs.
+  Save the downloads as icon16.png, icon48.png, icon128.png
+  inside this icons/ folder, then delete this file.
+-->
+<html>
+<head>
+  <title>Icon Generator</title>
+  <style>body{font-family:sans-serif;padding:20px;background:#111;color:#eee;}</style>
+</head>
+<body>
+  <h2>AI Phishing Detector — Icon Generator</h2>
+  <p>Click each button to download the icon at that size.</p>
+  <div id="out"></div>
+
+  <script>
+    const sizes = [16, 48, 128];
+    const out = document.getElementById("out");
+
+    sizes.forEach(size => {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = size;
+      const ctx = canvas.getContext("2d");
+
+      // Background
+      ctx.fillStyle = "#0a0a0f";
+      ctx.fillRect(0, 0, size, size);
+
+      // Red border
+      ctx.strokeStyle = "#ff1a1a";
+      ctx.lineWidth = Math.max(1, size * 0.05);
+      ctx.strokeRect(ctx.lineWidth/2, ctx.lineWidth/2, size-ctx.lineWidth, size-ctx.lineWidth);
+
+      // Shield emoji / text
+      ctx.fillStyle = "#ff1a1a";
+      ctx.font = `bold ${size * 0.55}px serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText("🛡", size/2, size/2);
+
+      const a = document.createElement("a");
+      a.href = canvas.toDataURL("image/png");
+      a.download = `icon${size}.png`;
+      a.textContent = `Download icon${size}.png`;
+      a.style.cssText = "display:block;margin:10px 0;color:#ff4444;";
+      out.appendChild(a);
+    });
+  </script>
+</body>
+</html>

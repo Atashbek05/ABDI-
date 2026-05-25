@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberShield AI — Settings</title>
+  <link rel="stylesheet" href="settings.css" />
+</head>
+<body>
+  <div class="page-wrapper">
+
+    <header class="page-header">
+      <div class="header-left">
+        <span class="logo-icon">🛡️</span>
+        <div>
+          <div class="page-title">CyberShield AI</div>
+          <div class="page-sub">PROTECTION SETTINGS</div>
+        </div>
+      </div>
+      <button class="back-btn" onclick="window.history.back()">← Back</button>
+    </header>
+
+    <main class="settings-body">
+
+      <!-- Core Protection -->
+      <section class="settings-section">
+        <div class="section-title">⚡ Core Protection</div>
+        <div class="settings-group">
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Real-time Protection</div>
+              <div class="setting-desc">Automatically scan every website you visit</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="s-protection" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Real-time Scanning</div>
+              <div class="setting-desc">Scan page content as it loads</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="s-realtime" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Auto-Block Dangerous Sites</div>
+              <div class="setting-desc">Automatically block critical and high-risk threats</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="s-autoblock" />
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Desktop Notifications</div>
+              <div class="setting-desc">Show alerts when threats are detected</div>
+            </div>
+            <label class="toggle">
+              <input type="checkbox" id="s-notifications" checked />
+              <span class="slider"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- Detection settings -->
+      <section class="settings-section">
+        <div class="section-title">🎯 Detection Settings</div>
+        <div class="settings-group">
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Detection Sensitivity</div>
+              <div class="setting-desc">Higher = more alerts (may increase false positives)</div>
+            </div>
+            <select class="setting-select" id="s-sensitivity">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="paranoid">Paranoid</option>
+            </select>
+          </div>
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">Scan Mode</div>
+              <div class="setting-desc">Full = URL + content analysis; Fast = URL only</div>
+            </div>
+            <select class="setting-select" id="s-scan-mode">
+              <option value="url">URL Only (Fast)</option>
+              <option value="full" selected>Full Analysis</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Whitelist -->
+      <section class="settings-section">
+        <div class="section-title">✅ Trusted Sites (Whitelist)</div>
+        <div class="settings-group">
+          <div class="domain-add-row">
+            <input class="domain-input" type="text" id="whitelist-input" placeholder="example.com" />
+            <button class="add-btn add-white" id="whitelist-add-btn">+ Add</button>
+          </div>
+          <div class="domain-list" id="whitelist-list">
+            <div class="list-empty">No trusted sites added</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Blacklist -->
+      <section class="settings-section">
+        <div class="section-title">🚫 Blocked Sites (Blacklist)</div>
+        <div class="settings-group">
+          <div class="domain-add-row">
+            <input class="domain-input" type="text" id="blacklist-input" placeholder="malicious.com" />
+            <button class="add-btn add-black" id="blacklist-add-btn">+ Block</button>
+          </div>
+          <div class="domain-list" id="blacklist-list">
+            <div class="list-empty">No blocked sites added</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Advanced -->
+      <section class="settings-section">
+        <div class="section-title">🔧 Advanced</div>
+        <div class="settings-group">
+          <div class="setting-row">
+            <div class="setting-info">
+              <div class="setting-name">API Server</div>
+              <div class="setting-desc">Backend server address</div>
+            </div>
+            <input class="setting-input" type="text" id="s-api-url" value="http://127.0.0.1:8000" />
+          </div>
+          <div class="action-row">
+            <button class="action-btn test-btn" id="test-connection-btn">🔗 Test Connection</button>
+            <button class="action-btn danger-btn" id="clear-history-btn">🗑 Clear History</button>
+            <button class="action-btn export-btn" id="export-btn">📤 Export Report</button>
+          </div>
+          <div class="connection-status" id="connection-status"></div>
+        </div>
+      </section>
+
+    </main>
+
+    <div class="save-bar">
+      <span id="save-msg" class="save-msg"></span>
+      <button class="save-btn" id="save-btn">💾 Save Settings</button>
+    </div>
+
+  </div>
+  <script src="settings.js"></script>
+</body>
+</html>

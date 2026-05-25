@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Phishing Detector</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 380px;
+      background: #07070f;
+      color: #c0c0cc;
+      font-family: 'Courier New', 'Lucida Console', monospace;
+      font-size: 12px;
+    }
+
+    /* ── Scanline overlay ── */
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg, transparent, transparent 3px,
+        rgba(0, 255, 100, 0.015) 3px, rgba(0, 255, 100, 0.015) 4px
+      );
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: linear-gradient(135deg, #0b0b1a 0%, #0f0f1e 100%);
+      border-bottom: 1px solid rgba(255, 26, 26, 0.25);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-icon {
+      width: 34px; height: 34px;
+      background: rgba(255, 26, 26, 0.08);
+      border: 1px solid rgba(255, 26, 26, 0.3);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .header-text h1 { font-size: 12px; font-weight: 700; color: #fff; letter-spacing: 1.5px; }
+    .header-text p  { font-size: 8px; color: #444; letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+
+    /* ── Protection toggle ── */
+    .protection-wrap {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .protection-label {
+      font-size: 8px;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #555;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 34px; height: 18px;
+      cursor: pointer;
+    }
+
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+
+    .toggle-track {
+      position: absolute;
+      inset: 0;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 9px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .toggle-track::after {
+      content: "";
+      position: absolute;
+      left: 2px; top: 2px;
+      width: 12px; height: 12px;
+      background: #555;
+      border-radius: 50%;
+      transition: transform 0.2s, background 0.2s;
+    }
+
+    .toggle-switch input:checked + .toggle-track {
+      background: rgba(0, 204, 102, 0.15);
+      border-color: rgba(0, 204, 102, 0.4);
+    }
+
+    .toggle-switch input:checked + .toggle-track::after {
+      transform: translateX(16px);
+      background: #00cc66;
+      box-shadow: 0 0 6px rgba(0, 204, 102, 0.6);
+    }
+
+    /* ── Status pill ── */
+    .backend-status {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 8px; letter-spacing: 1px; text-transform: uppercase;
+      padding: 3px 7px; border-radius: 20px; border: 1px solid transparent;
+    }
+
+    .backend-status.online  { color: #00cc66; border-color: rgba(0,204,102,0.25); background: rgba(0,204,102,0.07); }
+    .backend-status.offline { color: #ff4444; border-color: rgba(255,68,68,0.25);  background: rgba(255,68,68,0.07); }
+    .backend-status.unknown { color: #666;    border-color: rgba(136,136,136,0.2); background: transparent; }
+
+    .status-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .backend-status.online .status-dot { animation: blink 1.5s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+    /* ── Second header row (status + settings icon) ── */
+    .header-row2 {
+      background: #0b0b18;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      padding: 5px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: none;
+      color: #444;
+      font-size: 13px;
+      cursor: pointer;
+      padding: 3px 5px;
+      border-radius: 4px;
+      transition: color 0.15s, background 0.15s;
+    }
+    .icon-btn:hover { color: #888; background: rgba(255,255,255,0.05); }
+
+    /* ── Tab nav ── */
+    .tab-nav {
+      display: flex;
+      align-items: stretch;
+      background: #0b0b18;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px 6px;
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      color: #444;
+      font-family: inherit;
+      font-size: 8px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .tab-btn:hover { color: #666; background: rgba(255,255,255,0.02); }
+
+    .tab-btn.active { color: #ff4444; border-bottom-color: #ff1a1a; background: rgba(255,26,26,0.04); }
+
+    .tab-panel        { display: block; }
+    .tab-panel[hidden] { display: none; }
+
+    /* ── Body ── */
+    .body { padding: 13px 14px; }
+
+    /* ── URL section ── */
+    .url-section { margin-bottom: 12px; }
+
+    .section-label {
+      font-size: 8px; color: #444; letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 4px;
+    }
+
+    .url-text {
+      font-size: 10px; color: #777; word-break: break-all;
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px; padding: 6px 9px; line-height: 1.5;
+    }
+
+    /* ── Quick action buttons ── */
+    .quick-actions {
+      display: flex; gap: 5px; margin-top: 6px;
+    }
+
+    .btn-quick {
+      flex: 1; padding: 4px 6px;
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 3px;
+      color: #555;
+      font-family: inherit; font-size: 8px; letter-spacing: 1px;
+      text-transform: uppercase; cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-quick:hover { background: rgba(255,255,255,0.05); color: #888; border-color: rgba(255,255,255,0.15); }
+    .btn-quick.bl:hover { background: rgba(255,68,68,0.1); color: #ff6666; border-color: rgba(255,68,68,0.3); }
+    .btn-quick.wl:hover { background: rgba(0,170,255,0.1); color: #00aaff; border-color: rgba(0,170,255,0.3); }
+
+    /* ── Result card ── */
+    .result-card {
+      border-radius: 8px; padding: 14px; margin-bottom: 12px;
+      border: 1px solid; backdrop-filter: blur(10px);
+      transition: all 0.3s; animation: card-enter 0.3s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+
+    @keyframes card-enter {
+      from { opacity: 0; transform: translateY(5px) scale(0.98); }
+      to   { opacity: 1; transform: none; }
+    }
+
+    .result-card.safe       { background: rgba(0,204,102,0.06);  border-color: rgba(0,204,102,0.3);  }
+    .result-card.suspicious { background: rgba(255,170,0,0.06);  border-color: rgba(255,170,0,0.3);
+      animation: card-enter .3s cubic-bezier(.34,1.56,.64,1) forwards,card-pulse-warn 2.5s ease .3s infinite; }
+    .result-card.danger     { background: rgba(255,26,26,0.06);   border-color: rgba(255,26,26,0.35);
+      animation: card-enter .3s cubic-bezier(.34,1.56,.64,1) forwards,card-pulse 2s ease .3s infinite; }
+    .result-card.checking   { background: rgba(51,102,255,0.04);  border-color: rgba(51,102,255,0.2); }
+    .result-card.error      { background: rgba(100,100,100,0.04); border-color: rgba(100,100,100,0.18); }
+    .result-card.blocked    { background: rgba(204,0,0,0.07);     border-color: rgba(204,0,0,0.4);
+      animation: card-enter .3s cubic-bezier(.34,1.56,.64,1) forwards,card-pulse-blocked 1.5s ease .3s infinite; }
+    .result-card.whitelist  { background: rgba(0,170,255,0.05);   border-color: rgba(0,170,255,0.25); }
+    .result-card.disabled   { background: rgba(60,60,60,0.04);    border-color: rgba(60,60,60,0.2); }
+
+    @keyframes card-pulse         { 0%,100%{box-shadow:0 0 12px rgba(255,26,26,.06)} 50%{box-shadow:0 0 22px rgba(255,26,26,.25)} }
+    @keyframes card-pulse-warn    { 0%,100%{box-shadow:0 0 12px rgba(255,170,0,.06)} 50%{box-shadow:0 0 22px rgba(255,170,0,.2)} }
+    @keyframes card-pulse-blocked { 0%,100%{box-shadow:0 0 14px rgba(204,0,0,.08)}   50%{box-shadow:0 0 28px rgba(204,0,0,.4)} }
+
+    /* ── Status badge ── */
+    .status-badge { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .badge-icon   { font-size: 20px; line-height: 1; }
+    .badge-label  { font-size: 13px; font-weight: 700; letter-spacing: 2px; }
+    .badge-label.safe      { color: #00cc66; }
+    .badge-label.whitelist { color: #00aaff; }
+    .badge-label.danger    { color: #ff1a1a; }
+    .badge-label.blocked   { color: #cc0000; animation: label-blink 1s step-end infinite; }
+    .badge-label.warn      { color: #ffaa00; }
+    .badge-label.checking  { color: #3366ff; }
+    .badge-label.error     { color: #666; }
+    .badge-label.disabled  { color: #444; }
+    @keyframes label-blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+    /* source tag */
+    .source-tag {
+      margin-left: auto;
+      font-size: 8px; letter-spacing: 1px; padding: 2px 6px;
+      border-radius: 3px; text-transform: uppercase;
+    }
+    .source-tag.bl  { background: rgba(204,0,0,.15); color:#ff4444; border:1px solid rgba(204,0,0,.3); }
+    .source-tag.wl  { background: rgba(0,170,255,.1); color:#00aaff; border:1px solid rgba(0,170,255,.25); }
+    .source-tag.ai  { background: rgba(255,255,255,.04); color:#555; border:1px solid rgba(255,255,255,.08); }
+
+    /* ── Metrics ── */
+    .metrics { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+
+    .metric {
+      background: rgba(255,255,255,0.025);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px; padding: 8px 9px;
+    }
+
+    .metric-label { font-size: 7px; color: #444; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; }
+    .metric-value { font-size: 13px; font-weight: 700; color: #aaa; }
+    .metric-value.v-safe   { color: #00cc66; }
+    .metric-value.v-danger { color: #ff1a1a; }
+    .metric-value.v-warn   { color: #ffaa00; }
+    .metric-value.v-bl     { color: #cc0000; }
+    .metric-value.v-wl     { color: #00aaff; }
+
+    /* ── Confidence bar ── */
+    .confidence-wrap { margin-top: 10px; }
+    .confidence-track { height: 3px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; margin-top: 4px; }
+    .confidence-fill  { height: 100%; border-radius: 2px; transition: width 0.5s ease; }
+    .confidence-fill.safe      { background: linear-gradient(90deg,#00cc66,#00ff88); }
+    .confidence-fill.warn      { background: linear-gradient(90deg,#ffaa00,#ffcc44); }
+    .confidence-fill.danger    { background: linear-gradient(90deg,#ff1a1a,#ff5555); }
+    .confidence-fill.blocked   { background: linear-gradient(90deg,#cc0000,#ff0000); }
+    .confidence-fill.whitelist { background: linear-gradient(90deg,#0088cc,#00aaff); }
+
+    /* ── Reasons ── */
+    .reasons-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.05); }
+    .reasons-list    { list-style: none; display: flex; flex-direction: column; gap: 3px; }
+
+    .reason-item {
+      display: flex; align-items: flex-start; gap: 6px;
+      font-size: 9px; color: #888;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 3px; padding: 5px 7px; line-height: 1.4;
+      animation: reason-in 0.2s ease both;
+    }
+
+    @keyframes reason-in { from{opacity:0;transform:translateX(-4px)} to{opacity:1;transform:none} }
+    .reason-dot { flex-shrink:0; width:4px; height:4px; border-radius:50%; margin-top:3px; }
+    .reason-item.threat  .reason-dot { background:#ff4444; box-shadow:0 0 4px rgba(255,68,68,.5); }
+    .reason-item.threat              { border-color:rgba(255,68,68,.1); color:#aaa; }
+    .reason-item.warn-item .reason-dot { background:#ffaa00; }
+    .reason-item.warn-item           { border-color:rgba(255,170,0,.1); }
+    .reason-item.ok .reason-dot      { background:#00cc66; }
+    .reason-item.ok                  { border-color:rgba(0,204,102,.1); color:#6a9; }
+
+    /* ── Buttons ── */
+    .btn-recheck {
+      width: 100%; padding: 9px; background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.09); border-radius: 4px;
+      color: #666; font-family: inherit; font-size: 9px; letter-spacing: 2px;
+      text-transform: uppercase; cursor: pointer; transition: all 0.15s; margin-bottom: 8px;
+    }
+    .btn-recheck:hover    { background: rgba(255,255,255,0.08); color: #aaa; }
+    .btn-recheck:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* ── Footer ── */
+    .footer { border-top: 1px solid rgba(255,255,255,0.05); padding: 7px 14px; font-size: 8px; color: #333; letter-spacing: 1px; text-align: center; }
+
+    /* ── Spinner ── */
+    .spinner {
+      display: inline-block; width: 12px; height: 12px;
+      border: 2px solid rgba(51,102,255,0.2); border-top-color: #3366ff;
+      border-radius: 50%; animation: spin .7s linear infinite;
+      vertical-align: middle; margin-right: 5px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── History tab ── */
+    .history-controls { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .history-count-text { font-size: 8px; color: #444; letter-spacing: 1.5px; text-transform: uppercase; }
+
+    .btn-clear {
+      padding: 3px 9px; background: rgba(255,68,68,0.07);
+      border: 1px solid rgba(255,68,68,0.2); border-radius: 3px;
+      color: #ff6666; font-family: inherit; font-size: 8px;
+      letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-clear:hover    { background: rgba(255,68,68,0.15); }
+    .btn-clear:disabled { opacity: .35; cursor: not-allowed; }
+
+    .history-list { display:flex; flex-direction:column; gap:4px; max-height:280px; overflow-y:auto; scrollbar-width:thin; scrollbar-color:rgba(255,255,255,0.08) transparent; }
+    .history-list::-webkit-scrollbar       { width: 3px; }
+    .history-list::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 2px; }
+
+    .history-item {
+      background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 4px; padding: 7px 9px; transition: border-color .15s;
+      animation: hi-enter 0.2s ease both;
+    }
+    @keyframes hi-enter { from{opacity:0;transform:translateY(3px)} to{opacity:1;transform:none} }
+    .history-item:hover { border-color: rgba(255,255,255,0.12); }
+    .history-item.hi-high       { border-left: 2px solid rgba(255,26,26,0.5); }
+    .history-item.hi-suspicious { border-left: 2px solid rgba(255,170,0,0.5); }
+    .history-item.hi-safe       { border-left: 2px solid rgba(0,204,102,0.5); }
+
+    .hi-url  { font-size: 9px; color: #888; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-bottom: 4px; }
+    .hi-meta { display:flex; align-items:center; gap:6px; }
+
+    .risk-badge { display:inline-block; padding:1px 5px; border-radius:3px; font-size:7px; font-weight:700; letter-spacing:1px; text-transform:uppercase; }
+    .risk-badge.rb-safe       { background:rgba(0,204,102,.12);   color:#00cc66; border:1px solid rgba(0,204,102,.25); }
+    .risk-badge.rb-suspicious { background:rgba(255,170,0,.12);   color:#ffaa00; border:1px solid rgba(255,170,0,.25); }
+    .risk-badge.rb-high       { background:rgba(255,26,26,.12);   color:#ff4444; border:1px solid rgba(255,26,26,.25); }
+
+    .hi-conf  { font-size: 8px; color: #444; }
+    .hi-time  { font-size: 8px; color: #333; margin-left: auto; }
+
+    /* ── State messages ── */
+    .state-msg { padding: 22px 10px; text-align:center; color:#444; font-size:9px; letter-spacing:1px; }
+    .state-msg-icon { font-size:20px; margin-bottom:7px; }
+    .state-msg-sub  { font-size:8px; color:#333; margin-top:3px; }
+  </style>
+</head>
+<body>
+
+  <!-- ── Header ── -->
+  <div class="header">
+    <div class="header-icon">🛡</div>
+    <div class="header-text">
+      <h1>AI PHISHING DETECTOR</h1>
+      <p>Realtime threat protection</p>
+    </div>
+    <div class="protection-wrap">
+      <span class="protection-label" id="protLabel">ON</span>
+      <label class="toggle-switch" title="Toggle realtime protection">
+        <input type="checkbox" id="protectionToggle" checked />
+        <span class="toggle-track"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- ── Sub-header row ── -->
+  <div class="header-row2">
+    <div class="backend-status unknown" id="backendStatus">
+      <div class="status-dot"></div>
+      <span id="backendLabel">—</span>
+    </div>
+    <div style="display:flex;gap:4px">
+      <button class="icon-btn" id="openDashboard" title="Analytics Dashboard">📊</button>
+      <button class="icon-btn" id="openSettings"  title="Settings">⚙</button>
+    </div>
+  </div>
+
+  <!-- ── Tab nav ── -->
+  <div class="tab-nav">
+    <button class="tab-btn active" id="tabScan"    data-tab="scan">⚡ SCAN</button>
+    <button class="tab-btn"        id="tabHistory" data-tab="history">📋 HISTORY</button>
+  </div>
+
+  <!-- ══════════════ SCAN TAB ══════════════ -->
+  <div id="panelScan" class="tab-panel">
+    <div class="body">
+
+      <!-- Current URL + quick actions -->
+      <div class="url-section">
+        <div class="section-label">Current Website</div>
+        <div class="url-text" id="currentUrl">Loading…</div>
+        <div class="quick-actions">
+          <button class="btn-quick bl" id="quickBlacklist" title="Block this domain">🚫 Blacklist</button>
+          <button class="btn-quick wl" id="quickWhitelist" title="Trust this domain">✓ Whitelist</button>
+        </div>
+      </div>
+
+      <!-- Result card -->
+      <div class="result-card checking" id="resultCard">
+        <div class="status-badge">
+          <div class="badge-icon"  id="badgeIcon">⏳</div>
+          <div class="badge-label checking" id="badgeLabel">SCANNING</div>
+          <span class="source-tag ai" id="sourceTag" style="display:none">AI</span>
+        </div>
+
+        <div class="metrics" id="metricsGrid" style="display:none">
+          <div class="metric">
+            <div class="metric-label">AI Verdict</div>
+            <div class="metric-value" id="metricVerdict">—</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Risk Level</div>
+            <div class="metric-value" id="metricRisk">—</div>
+          </div>
+        </div>
+
+        <div class="confidence-wrap" id="confidenceWrap" style="display:none">
+          <div class="metric-label">Confidence — <span id="confidenceText">0%</span></div>
+          <div class="confidence-track">
+            <div class="confidence-fill safe" id="confidenceFill" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="reasons-section" id="reasonsSection" style="display:none">
+          <div class="section-label" style="margin-bottom:5px">AI Analysis Findings</div>
+          <ul class="reasons-list" id="reasonsList"></ul>
+        </div>
+      </div>
+
+      <button class="btn-recheck" id="recheckBtn">↺ RE-ANALYSE URL</button>
+    </div>
+  </div>
+
+  <!-- ══════════════ HISTORY TAB ══════════════ -->
+  <div id="panelHistory" class="tab-panel" hidden>
+    <div class="body">
+
+      <div class="history-controls">
+        <span class="history-count-text" id="historyCount">— scans</span>
+        <button class="btn-clear" id="clearHistoryBtn">✕ CLEAR ALL</button>
+      </div>
+
+      <div id="historyLoading" class="state-msg"><div><span class="spinner"></span>Loading…</div></div>
+      <div id="historyEmpty"   class="state-msg" hidden>
+        <div class="state-msg-icon">📭</div>
+        <div>No scan history yet</div>
+        <div class="state-msg-sub">Sites you visit will appear here</div>
+      </div>
+      <div id="historyOffline" class="state-msg" hidden>
+        <div class="state-msg-icon">🔌</div>
+        <div>Backend offline</div>
+        <div class="state-msg-sub">Start the detection server to view history</div>
+      </div>
+      <div id="historyList" class="history-list" hidden></div>
+
+    </div>
+  </div>
+
+  <!-- ── Footer ── -->
+  <div class="footer">AI Phishing Detector &bull; Powered by Machine Learning</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberShield AI</title>
+  <link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <div class="popup-wrapper">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo-icon">🛡️</div>
+        <div class="logo-text">
+          <span class="logo-title">CyberShield</span>
+          <span class="logo-sub">AI PROTECTION</span>
+        </div>
+      </div>
+      <div class="header-right">
+        <div class="toggle-wrap">
+          <label class="toggle">
+            <input type="checkbox" id="protection-toggle" checked />
+            <span class="slider"></span>
+          </label>
+        </div>
+        <button class="icon-btn" id="settings-btn" title="Settings">⚙</button>
+      </div>
+    </header>
+
+    <!-- Status card -->
+    <div class="status-card" id="status-card">
+      <!-- Scan effects layer (active during scanning) -->
+      <div class="scan-anim" id="scan-anim"></div>
+      <div class="scan-grid" id="scan-grid" aria-hidden="true"></div>
+      <div class="scan-radar" id="scan-radar" aria-hidden="true">
+        <div class="scan-radar-sweep"></div>
+        <div class="scan-radar-ring r1"></div>
+        <div class="scan-radar-ring r2"></div>
+        <div class="scan-radar-ring r3"></div>
+      </div>
+
+      <div class="status-icon-wrap">
+        <div class="status-icon" id="status-icon">🔍</div>
+        <div class="status-ring" id="status-ring"></div>
+        <div class="status-reticle" id="status-reticle" aria-hidden="true">
+          <span class="ret-corner tl"></span>
+          <span class="ret-corner tr"></span>
+          <span class="ret-corner bl"></span>
+          <span class="ret-corner br"></span>
+        </div>
+      </div>
+      <div class="status-info">
+        <div class="status-label" id="status-label">SCANNING</div>
+        <div class="status-domain" id="status-domain">Loading...</div>
+        <div class="status-sub" id="status-sub">
+          <span id="status-sub-text">Analyzing page...</span><span class="caret" id="status-caret">▌</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Realtime inspection stream (visible only while scanning) -->
+    <div class="inspect-stream" id="inspect-stream" style="display:none" aria-live="polite">
+      <div class="inspect-stream-head">
+        <span class="is-dot"></span>
+        <span class="is-label">REALTIME INSPECTION</span>
+        <span class="is-spinner"></span>
+      </div>
+      <ul class="inspect-stream-list" id="inspect-stream-list"></ul>
+    </div>
+
+    <!-- Fake login warning banner (shown when fake login detected) -->
+    <div class="fake-login-banner" id="fake-login-banner" style="display:none">
+      <span class="flb-icon">⚠</span>
+      <div class="flb-text">
+        <div class="flb-title">FAKE LOGIN PAGE DETECTED</div>
+        <div class="flb-sub">Do not enter your credentials on this page</div>
+      </div>
+    </div>
+
+    <!-- Risk meter -->
+    <div class="section" id="risk-section" style="display:none">
+      <div class="section-label">RISK SCORE</div>
+      <div class="risk-bar-wrap">
+        <div class="risk-bar-bg">
+          <div class="risk-bar-fill" id="risk-bar-fill"></div>
+        </div>
+        <div class="risk-bar-labels">
+          <span>SAFE</span><span>LOW</span><span>MEDIUM</span><span>HIGH</span><span>CRITICAL</span>
+        </div>
+      </div>
+      <div class="risk-score-row">
+        <span class="risk-score-num" id="risk-score-num">0</span>
+        <span class="risk-score-label">/ 100</span>
+        <span class="risk-level-badge" id="risk-level-badge">SAFE</span>
+      </div>
+    </div>
+
+    <!-- Scan details -->
+    <div class="details-grid" id="details-grid" style="display:none">
+      <div class="detail-item">
+        <div class="detail-label">THREAT TYPE</div>
+        <div class="detail-value" id="d-threat-type">—</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">AI CONFIDENCE</div>
+        <div class="detail-value" id="d-confidence">—</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">SCAN TIME</div>
+        <div class="detail-value" id="d-scan-time">—</div>
+      </div>
+      <div class="detail-item">
+        <div class="detail-label">VISUAL RISK</div>
+        <div class="detail-value" id="d-visual-risk">—</div>
+      </div>
+    </div>
+
+    <!-- AI Multi-Model Breakdown -->
+    <div class="ai-panel" id="ai-panel" style="display:none">
+      <div class="ai-panel-head">
+        <span class="ai-pulse"></span>
+        <span class="ai-panel-title">AI ENSEMBLE</span>
+        <span class="ai-panel-status" id="ai-engine-status">4 MODELS · ACTIVE</span>
+      </div>
+
+      <!-- Animated AI risk meter -->
+      <div class="ai-meter" id="ai-meter">
+        <svg viewBox="0 0 120 70" class="ai-meter-svg" aria-hidden="true">
+          <defs>
+            <linearGradient id="ai-meter-grad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"  stop-color="#00ff9d"/>
+              <stop offset="50%" stop-color="#ffcc00"/>
+              <stop offset="100%" stop-color="#ff3344"/>
+            </linearGradient>
+          </defs>
+          <path d="M10 60 A 50 50 0 0 1 110 60" stroke="rgba(255,255,255,0.08)" stroke-width="10" fill="none" stroke-linecap="round"/>
+          <path id="ai-meter-fill" d="M10 60 A 50 50 0 0 1 110 60" stroke="url(#ai-meter-grad)" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="0 200"/>
+          <circle id="ai-meter-needle" cx="10" cy="60" r="4" fill="#ffffff"/>
+        </svg>
+        <div class="ai-meter-value">
+          <span class="ai-meter-num" id="ai-meter-num">0</span>
+          <span class="ai-meter-suffix">%</span>
+        </div>
+        <div class="ai-meter-caption" id="ai-meter-caption">THREAT PROBABILITY</div>
+      </div>
+
+      <!-- Per-model breakdown -->
+      <div class="ai-models" id="ai-models"></div>
+
+      <!-- Specialised score breakdown -->
+      <div class="ai-scores" id="ai-scores"></div>
+
+      <!-- Ensemble decision footer -->
+      <div class="ai-decision">
+        <div class="ai-decision-item">
+          <span class="ai-decision-label">PREDICTION</span>
+          <span class="ai-decision-value" id="ai-prediction">—</span>
+        </div>
+        <div class="ai-decision-item">
+          <span class="ai-decision-label">CONFIDENCE</span>
+          <span class="ai-decision-value" id="ai-confidence">—</span>
+        </div>
+        <div class="ai-decision-item">
+          <span class="ai-decision-label">AGREEMENT</span>
+          <span class="ai-decision-value" id="ai-agreement">—</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Page Analysis Panel (shown when page_analysis data present) -->
+    <div class="page-analysis-panel" id="page-analysis-panel" style="display:none">
+      <div class="pa-header" id="pa-toggle" role="button" tabindex="0" aria-expanded="false">
+        <span class="pa-header-icon" id="pa-header-icon">🔬</span>
+        <span class="pa-header-title">PAGE ANALYSIS</span>
+        <span class="pa-badges" id="pa-badges"></span>
+        <span class="pa-chevron" id="pa-chevron">▾</span>
+      </div>
+      <div class="pa-body" id="pa-body" style="display:none">
+
+        <!-- Visual risk scores -->
+        <div class="pa-scores">
+          <div class="pa-score-row">
+            <span class="pa-score-label">Login Risk</span>
+            <div class="pa-score-bar-bg">
+              <div class="pa-score-bar-fill" id="pa-login-bar"></div>
+            </div>
+            <span class="pa-score-val" id="pa-login-val">0%</span>
+          </div>
+          <div class="pa-score-row">
+            <span class="pa-score-label">Impersonation</span>
+            <div class="pa-score-bar-bg">
+              <div class="pa-score-bar-fill" id="pa-imp-bar"></div>
+            </div>
+            <span class="pa-score-val" id="pa-imp-val">0%</span>
+          </div>
+          <div class="pa-score-row">
+            <span class="pa-score-label">Cred. Theft</span>
+            <div class="pa-score-bar-bg">
+              <div class="pa-score-bar-fill" id="pa-cred-bar"></div>
+            </div>
+            <span class="pa-score-val" id="pa-cred-val">0%</span>
+          </div>
+        </div>
+
+        <!-- Structural threat indicators -->
+        <div class="pa-indicators" id="pa-indicators"></div>
+
+        <!-- Credential harvesting patterns -->
+        <div class="pa-patterns" id="pa-patterns" style="display:none">
+          <div class="pa-sub-label">CREDENTIAL HARVESTING PATTERNS</div>
+          <ul class="pa-list" id="pa-patterns-list"></ul>
+        </div>
+
+        <!-- Impersonation signals -->
+        <div class="pa-impers" id="pa-impers" style="display:none">
+          <div class="pa-sub-label">IMPERSONATION SIGNALS</div>
+          <ul class="pa-list" id="pa-impers-list"></ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Threat reasons -->
+    <div class="reasons-section" id="reasons-section" style="display:none">
+      <div class="section-label">THREAT INDICATORS</div>
+      <ul class="reasons-list" id="reasons-list"></ul>
+    </div>
+
+    <!-- Threat explanation -->
+    <div class="explanation-section" id="explanation-section" style="display:none">
+      <div class="explanation-text" id="explanation-text"></div>
+    </div>
+
+    <!-- Action buttons -->
+    <div class="actions" id="actions-section" style="display:none">
+      <button class="action-btn action-rescan" id="rescan-btn">🔄 Rescan</button>
+      <button class="action-btn action-whitelist" id="whitelist-btn">✅ Trust Site</button>
+      <button class="action-btn action-report" id="report-btn">🚩 Report</button>
+    </div>
+
+    <!-- Stats bar -->
+    <div class="stats-bar">
+      <div class="stat-item">
+        <div class="stat-num" id="stat-total">0</div>
+        <div class="stat-lbl">Scanned</div>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat-item">
+        <div class="stat-num threat" id="stat-threats">0</div>
+        <div class="stat-lbl">Threats</div>
+      </div>
+      <div class="stat-sep"></div>
+      <div class="stat-item">
+        <div class="stat-num" id="stat-rate">0%</div>
+        <div class="stat-lbl">Block Rate</div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <span class="footer-status" id="footer-status">
+        <span class="dot dot-green"></span> Engine Active
+      </span>
+      <button class="footer-link" id="dashboard-btn">📊 Dashboard</button>
+    </footer>
+
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>

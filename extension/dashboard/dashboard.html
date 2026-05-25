@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CyberShield AI — Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="app">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <span class="logo-icon">🛡️</span>
+        <div>
+          <div class="logo-title">CyberShield</div>
+          <div class="logo-sub">AI DASHBOARD</div>
+        </div>
+      </div>
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="overview">📊 Overview</button>
+        <button class="nav-item" data-view="threats">🚨 Threats</button>
+        <button class="nav-item" data-view="history">📋 History</button>
+        <button class="nav-item" data-view="analytics">📈 Analytics</button>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="engine-status">
+          <span class="dot dot-green"></span>
+          <span>Engine Active</span>
+        </div>
+        <div class="version-tag">v2.0.0</div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+
+      <!-- Top bar -->
+      <div class="topbar">
+        <div class="topbar-title" id="view-title">Security Overview</div>
+        <div class="topbar-actions">
+          <button class="tb-btn" id="refresh-btn">🔄 Refresh</button>
+          <button class="tb-btn tb-export" id="export-btn">📤 Export</button>
+          <div class="live-indicator"><span class="dot dot-blue pulse-dot"></span> LIVE</div>
+        </div>
+      </div>
+
+      <!-- View: Overview ─────────────────────────────────────────────── -->
+      <div class="view active" id="view-overview">
+
+        <!-- Stats row -->
+        <div class="stats-row">
+          <div class="stat-card">
+            <div class="stat-icon">🔍</div>
+            <div class="stat-data">
+              <div class="stat-num" id="v-total">—</div>
+              <div class="stat-lbl">Total Scans</div>
+            </div>
+            <div class="stat-trend up" id="v-total-trend">+0</div>
+          </div>
+          <div class="stat-card danger">
+            <div class="stat-icon">🚨</div>
+            <div class="stat-data">
+              <div class="stat-num" id="v-threats">—</div>
+              <div class="stat-lbl">Threats Detected</div>
+            </div>
+            <div class="stat-trend" id="v-threat-trend">—</div>
+          </div>
+          <div class="stat-card safe">
+            <div class="stat-icon">✅</div>
+            <div class="stat-data">
+              <div class="stat-num" id="v-safe">—</div>
+              <div class="stat-lbl">Safe Sites</div>
+            </div>
+          </div>
+          <div class="stat-card warn">
+            <div class="stat-icon">📊</div>
+            <div class="stat-data">
+              <div class="stat-num" id="v-rate">—</div>
+              <div class="stat-lbl">Detection Rate</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-data">
+              <div class="stat-num" id="v-speed">—</div>
+              <div class="stat-lbl">Avg Scan Speed</div>
+            </div>
+          </div>
+          <div class="stat-card info">
+            <div class="stat-icon">🎯</div>
+            <div class="stat-data">
+              <div class="stat-num" id="v-confidence">—</div>
+              <div class="stat-lbl">Avg Confidence</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts row -->
+        <div class="charts-row">
+          <div class="chart-card wide">
+            <div class="chart-title">📅 Daily Scan Activity (14 Days)</div>
+            <div class="chart-wrap"><canvas id="chart-daily"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">🎯 Threat Distribution</div>
+            <div class="chart-wrap"><canvas id="chart-threats"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Bottom row -->
+        <div class="bottom-row">
+          <div class="table-card">
+            <div class="table-title">🚨 Recent Threats</div>
+            <div class="table-wrap">
+              <table class="data-table" id="recent-threats-table">
+                <thead>
+                  <tr>
+                    <th>Domain</th><th>Threat Type</th><th>Risk</th><th>Confidence</th><th>Time</th>
+                  </tr>
+                </thead>
+                <tbody id="recent-threats-body">
+                  <tr><td colspan="5" class="loading-row">Loading...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="chart-card small">
+            <div class="chart-title">⚠ Risk Level Distribution</div>
+            <div class="chart-wrap"><canvas id="chart-risk"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- View: Threats ──────────────────────────────────────────────── -->
+      <div class="view" id="view-threats">
+        <div class="filter-bar">
+          <select class="filter-select" id="threats-filter-type">
+            <option value="">All Types</option>
+            <option value="phishing">Phishing</option>
+            <option value="fake_login">Fake Login</option>
+            <option value="fake_banking">Fake Banking</option>
+            <option value="crypto_scam">Crypto Scam</option>
+            <option value="malware">Malware</option>
+            <option value="scam">Scam</option>
+          </select>
+          <select class="filter-select" id="threats-filter-risk">
+            <option value="">All Risk Levels</option>
+            <option value="critical">Critical</option>
+            <option value="high">High</option>
+            <option value="medium">Medium</option>
+            <option value="low">Low</option>
+          </select>
+          <button class="filter-btn" id="threats-filter-btn">Apply</button>
+        </div>
+        <div class="table-card full">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th><th>Domain</th><th>Threat Type</th>
+                  <th>Risk Level</th><th>Confidence</th><th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="threats-body">
+                <tr><td colspan="6" class="loading-row">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- View: History ──────────────────────────────────────────────── -->
+      <div class="view" id="view-history">
+        <div class="filter-bar">
+          <input type="text" class="filter-input" id="history-search" placeholder="Search domain or URL..." />
+          <label class="filter-check">
+            <input type="checkbox" id="history-threats-only" /> Threats only
+          </label>
+        </div>
+        <div class="table-card full">
+          <div class="table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>#</th><th>URL</th><th>Domain</th><th>Status</th>
+                  <th>Threat Type</th><th>Confidence</th><th>Scan Time</th><th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="history-body">
+                <tr><td colspan="8" class="loading-row">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="pagination" id="history-pagination"></div>
+      </div>
+
+      <!-- View: Analytics ────────────────────────────────────────────── -->
+      <div class="view" id="view-analytics">
+        <div class="charts-grid">
+          <div class="chart-card">
+            <div class="chart-title">📈 Threat Trend (14 days)</div>
+            <div class="chart-wrap"><canvas id="chart-trend"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">🎯 Attack Categories</div>
+            <div class="chart-wrap"><canvas id="chart-categories"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">📊 Scans vs Threats</div>
+            <div class="chart-wrap"><canvas id="chart-ratio"></canvas></div>
+          </div>
+          <div class="chart-card">
+            <div class="chart-title">⚡ Top Threat Domains</div>
+            <div class="chart-wrap"><canvas id="chart-domains"></canvas></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
