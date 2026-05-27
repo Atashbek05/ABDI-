@@ -8,6 +8,7 @@ import tldextract
 from services.domain_reputation import DomainReputationService
 from services.content_analyzer import ContentAnalyzer
 from services.dom_analyzer import DOMAnalyzer
+from services.openai_analyzer import OpenAIAnalyzer
 from ai_engine import ThreatAnalyzer
 
 logger = logging.getLogger(__name__)
@@ -53,6 +54,7 @@ class AIDetectionEngine:
         self.domain_rep = DomainReputationService()
         self.content_analyzer = ContentAnalyzer()
         self.dom_analyzer = DOMAnalyzer()
+        self.openai_analyzer = OpenAIAnalyzer()
         # Multi-model ensemble facade (loads RF / XGBoost / MLP / LR bundle).
         self.threat_analyzer = ThreatAnalyzer()
 
@@ -138,6 +140,10 @@ class AIDetectionEngine:
         )
         ml_score = ai_result["ensemble_probability"]
 
+        # GPT-4o-mini layer: independent semantic threat assessment.
+        page_content_for_gpt = " ".join(filter(None, [page_title, page_text]))
+        openai_result = await self.openai_analyzer.analyze(url=url, page_content=page_content_for_gpt)
+
         has_content = bool(html_content or forms or scripts or dom_data)
         final_score = self._combine_scores(
             heuristic["score"],
@@ -154,6 +160,11 @@ class AIDetectionEngine:
             0.55 * final_score + 0.45 * ai_result["scores"]["overall_threat_score"],
             2,
         )
+
+        # Blend in OpenAI semantic score at 0.3 weight when available.
+        if openai_result["available"] and openai_result["confidence_score"] > 0:
+            openai_score = openai_result["confidence_score"] * 100
+            final_score = round(0.7 * final_score + 0.3 * openai_score, 2)
 
         if redirects and len(redirects) > 3:
             heuristic["reasons"].append(f"Suspicious redirect chain ({len(redirects)} hops)")
@@ -230,6 +241,7 @@ class AIDetectionEngine:
                 "agreement":    ai_result["agreement"],
                 "engine_status": ai_result["engine_status"],
             },
+            "openai_analysis": openai_result,
         }
 
     def _extract_url_features(self, url: str, parsed, extracted) -> Dict:
@@ -567,6 +579,7 @@ class AIDetectionEngine:
             "domain_reputation_score": 0.0, "content_analysis_score": 0.0, "cached": False,
             "visual_risk_score": 0.0, "fake_login_detected": False,
             "page_analysis": self._empty_page_analysis(),
+            "openai_analysis": None,
             **self._empty_ai_block(p=0.0, conf=99.0),
         }
 
@@ -585,6 +598,7 @@ class AIDetectionEngine:
             "domain_reputation_score": 99.0, "content_analysis_score": 0.0, "cached": False,
             "visual_risk_score": 0.0, "fake_login_detected": False,
             "page_analysis": self._empty_page_analysis(),
+            "openai_analysis": None,
             **self._empty_ai_block(p=99.0, conf=99.0),
         }
 
@@ -601,5 +615,6 @@ class AIDetectionEngine:
             "domain_reputation_score": 0.0, "content_analysis_score": 0.0, "cached": False,
             "visual_risk_score": 0.0, "fake_login_detected": False,
             "page_analysis": self._empty_page_analysis(),
+            "openai_analysis": None,
             **self._empty_ai_block(p=0.0, conf=0.0),
         }

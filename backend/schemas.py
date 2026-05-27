@@ -58,6 +58,15 @@ class EnsembleInfo(BaseModel):
     engine_status: str = "ml"
 
 
+class OpenAIAnalysis(BaseModel):
+    """Result from the GPT-4o-mini semantic threat analysis layer."""
+    threat_type: str = "unknown"
+    explanation: str = ""
+    confidence_score: float = 0.0
+    recommendation: str = ""
+    available: bool = False
+
+
 class ScanResponse(BaseModel):
     url: str
     domain: str
@@ -87,6 +96,7 @@ class ScanResponse(BaseModel):
     model_weights: Dict[str, float] = {}
     scores: Optional[RiskScoreBreakdown] = None
     ensemble: Optional[EnsembleInfo] = None
+    openai_analysis: Optional[OpenAIAnalysis] = None
 
 
 class ScanHistoryItem(BaseModel):
