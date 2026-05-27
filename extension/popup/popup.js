@@ -1,6 +1,6 @@
 // CyberShield AI — Popup Script v2.1
 
-const API_BASE = "http://127.0.0.1:8000/api/v1";
+const API_BASE = "https://abdi-d1ph.onrender.com/api/v1";
 
 const $ = (id) => document.getElementById(id);
 

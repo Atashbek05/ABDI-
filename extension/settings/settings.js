@@ -1,6 +1,6 @@
 // CyberShield AI — Settings Page
 
-let API_BASE = "http://127.0.0.1:8000/api/v1";
+let API_BASE = "https://abdi-d1ph.onrender.com/api/v1";
 
 const $ = (id) => document.getElementById(id);
 
@@ -24,10 +24,12 @@ async function loadSettings() {
   $("s-notifications").checked = data.notifications !== false;
   $("s-sensitivity").value = data.sensitivity || "medium";
   $("s-scan-mode").value = data.scanMode || "full";
-  if (data.apiUrl) {
-    $("s-api-url").value = data.apiUrl;
-    API_BASE = data.apiUrl + "/api/v1";
-  }
+  const DEFAULT_API = "https://abdi-d1ph.onrender.com";
+  const isStale = !data.apiUrl || /localhost|127\.0\.0\.1/.test(data.apiUrl);
+  const resolvedUrl = isStale ? DEFAULT_API : data.apiUrl;
+  if (isStale) await chrome.storage.local.set({ apiUrl: DEFAULT_API });
+  $("s-api-url").value = resolvedUrl;
+  API_BASE = resolvedUrl + "/api/v1";
 }
 
 async function loadWhitelist() {

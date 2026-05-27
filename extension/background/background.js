@@ -1,6 +1,6 @@
 // CyberShield AI — Background Service Worker (MV3)
 
-const API_HOST = "http://127.0.0.1:8000";
+const API_HOST = "https://abdi-d1ph.onrender.com";
 const API_BASE = API_HOST + "/api/v1";
 const SCAN_DEBOUNCE_MS = 800;
 const HEALTH_INTERVAL_MS = 30_000;

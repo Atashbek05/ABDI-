@@ -1,6 +1,6 @@
 // CyberShield AI — Analytics Dashboard
 
-const API_BASE = "http://127.0.0.1:8000/api/v1";
+const API_BASE = "https://abdi-d1ph.onrender.com/api/v1";
 
 const CHART_DEFAULTS = {
   plugins: { legend: { labels: { color: "#8888aa", font: { family: "Courier New" } } } },
