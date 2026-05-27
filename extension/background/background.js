@@ -1,7 +1,12 @@
 // CyberShield AI — Background Service Worker (MV3)
 
-const API_BASE = "http://127.0.0.1:8000/api/v1";
+const API_HOST = "http://127.0.0.1:8000";
+const API_BASE = API_HOST + "/api/v1";
 const SCAN_DEBOUNCE_MS = 800;
+const HEALTH_INTERVAL_MS = 30_000;
+const API_MAX_RETRIES = 3;
+const API_RETRY_DELAY_MS = 1000;
+
 const BADGE_COLORS = {
   safe: "#00ff88",
   low: "#ffdd00",
@@ -10,7 +15,10 @@ const BADGE_COLORS = {
   critical: "#ff0044",
   scanning: "#00aaff",
   unknown: "#888888",
+  offline: "#555555",
 };
+
+let backendOnline = true;
 
 // Per-tab state: { url, result, scanning }
 const tabState = {};
@@ -32,6 +40,37 @@ chrome.runtime.onInstalled.addListener(() => {
   });
   setBadge("unknown", "—");
 });
+
+// ── Health monitoring ────────────────────────────────────────────────────────
+
+async function pingHealth() {
+  try {
+    const resp = await fetch(`${API_HOST}/health`, {
+      signal: AbortSignal.timeout(5000),
+    });
+    setBackendOnline(resp.ok);
+  } catch (err) {
+    if (err instanceof TypeError) setBackendOnline(false);
+  }
+}
+
+function setBackendOnline(online) {
+  if (backendOnline === online) return;
+  backendOnline = online;
+  if (!online) {
+    console.warn("[CyberShield] Backend offline");
+    setBadge("offline", "OFF");
+  } else {
+    console.info("[CyberShield] Backend back online");
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]) updateBadgeFromState(tabs[0].id);
+    });
+  }
+}
+
+// Ping immediately on startup, then on a fixed interval.
+pingHealth();
+setInterval(pingHealth, HEALTH_INTERVAL_MS);
 
 // ── Tab monitoring ──────────────────────────────────────────────────────────
 
@@ -83,6 +122,11 @@ function scheduleTabScan(tabId, url) {
 async function scanTab(tabId, url) {
   const settings = await getSettings();
   if (!settings.protectionEnabled || !settings.realtimeScan) return;
+
+  if (!backendOnline) {
+    setBadgeForTab(tabId, "offline", "OFF");
+    return;
+  }
 
   // Mark as scanning
   tabState[tabId] = { url, result: null, scanning: true, redirectCount: 0 };
@@ -275,19 +319,34 @@ function updateBadgeFromState(tabId) {
 // ── API call ─────────────────────────────────────────────────────────────────
 
 async function callAPI(endpoint, body) {
-  try {
-    const resp = await fetch(API_BASE + endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-      signal: AbortSignal.timeout(10000),
-    });
-    if (!resp.ok) throw new Error(`API error ${resp.status}`);
-    return resp.json();
-  } catch (err) {
-    console.error("[CyberShield] API call failed:", err);
-    return null;
+  for (let attempt = 1; attempt <= API_MAX_RETRIES; attempt++) {
+    try {
+      const resp = await fetch(API_BASE + endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+        signal: AbortSignal.timeout(10000),
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      setBackendOnline(true);
+      return resp.json();
+    } catch (err) {
+      const isNetworkError = err instanceof TypeError;
+      if (isNetworkError && attempt < API_MAX_RETRIES) {
+        console.warn(`[CyberShield] API attempt ${attempt} failed, retrying in ${API_RETRY_DELAY_MS}ms…`);
+        await sleep(API_RETRY_DELAY_MS);
+        continue;
+      }
+      console.error(`[CyberShield] API call failed (attempt ${attempt}/${API_MAX_RETRIES}):`, err.message);
+      if (isNetworkError) setBackendOnline(false);
+      return null;
+    }
   }
+  return null;
+}
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 // ── Storage helpers ──────────────────────────────────────────────────────────

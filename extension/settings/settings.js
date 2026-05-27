@@ -149,7 +149,7 @@ async function testConnection() {
   const apiUrl = $("s-api-url").value.trim().replace(/\/$/, "");
   const status = $("connection-status");
   status.className = "connection-status";
-  status.textContent = "Testing...";
+  status.textContent = "Testing…";
   status.style.display = "block";
 
   try {
@@ -159,11 +159,19 @@ async function testConnection() {
       status.className = "connection-status ok";
       status.textContent = `✓ Connected — ${data.service} v${data.version} (${data.ml_model})`;
     } else {
-      throw new Error(`HTTP ${resp.status}`);
+      status.className = "connection-status fail";
+      status.textContent = `✗ Server returned HTTP ${resp.status} — check server logs`;
     }
   } catch (err) {
     status.className = "connection-status fail";
-    status.textContent = `✗ Connection failed: ${err.message}`;
+    if (err instanceof TypeError) {
+      // Network-level failure: server not running or wrong host
+      status.textContent = `✗ Backend not running — start the server (${apiUrl})`;
+    } else if (err.name === "AbortError") {
+      status.textContent = "✗ Connection timed out (5 s) — server may be overloaded or unreachable";
+    } else {
+      status.textContent = `✗ Cannot reach server — verify the URL is correct`;
+    }
   }
 }
 
