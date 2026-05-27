@@ -2,22 +2,24 @@
 
 const API_BASE = "https://abdi-d1ph.onrender.com/api/v1";
 
+const CHART_FONT = { family: "system-ui, -apple-system, 'Segoe UI', sans-serif", size: 11 };
+
 const CHART_DEFAULTS = {
-  plugins: { legend: { labels: { color: "#8888aa", font: { family: "Courier New" } } } },
+  plugins: { legend: { labels: { color: "#8b949e", font: CHART_FONT } } },
   scales: {
-    x: { ticks: { color: "#55557a", font: { family: "Courier New", size: 10 } }, grid: { color: "#1a1a38" } },
-    y: { ticks: { color: "#55557a", font: { family: "Courier New", size: 10 } }, grid: { color: "#1a1a38" } },
+    x: { ticks: { color: "#484f58", font: CHART_FONT }, grid: { color: "#21262d" } },
+    y: { ticks: { color: "#484f58", font: CHART_FONT }, grid: { color: "#21262d" } },
   },
 };
 
 const THREAT_COLORS = {
-  phishing: "#ff4400", fake_login: "#ff6600", fake_banking: "#ff2200",
-  crypto_scam: "#ffaa00", fake_payment: "#ff8800", malware: "#ff0044",
-  scam: "#ffcc00", suspicious_redirect: "#aa44ff", suspicious: "#6666aa",
+  phishing: "#f85149", fake_login: "#ff7b72", fake_banking: "#ffa198",
+  crypto_scam: "#d29922", fake_payment: "#e3b341", malware: "#ff6b6b",
+  scam: "#d29922", suspicious_redirect: "#79c0ff", suspicious: "#8b949e",
 };
 
 const RISK_COLORS = {
-  safe: "#00ff88", low: "#ffdd00", medium: "#ff9900", high: "#ff4400", critical: "#ff0044",
+  safe: "#3fb950", low: "#58a6ff", medium: "#d29922", high: "#e3b341", critical: "#f85149",
 };
 
 let charts = {};
@@ -25,7 +27,7 @@ let analyticsData = null;
 let historyPage = 0;
 const PAGE_SIZE = 50;
 
-// ── Init ─────────────────────────────────────────────────────────────────────
+// ── Init ──────────────────────────────────────────────────────────────────────
 
 document.addEventListener("DOMContentLoaded", () => {
   setupNav();
@@ -41,7 +43,8 @@ function setupNav() {
       btn.classList.add("active");
       const viewId = "view-" + btn.dataset.view;
       document.getElementById(viewId).classList.add("active");
-      document.getElementById("view-title").textContent = btn.textContent.replace(/^[^\s]+\s/, "");
+      const label = btn.querySelector(".nav-label");
+      document.getElementById("view-title").textContent = label ? label.textContent : btn.textContent.trim();
 
       if (btn.dataset.view === "analytics") renderAnalyticsCharts();
       if (btn.dataset.view === "threats") loadThreats();
@@ -79,12 +82,20 @@ async function loadAnalytics() {
 }
 
 function updateStatCards(data) {
-  setText("v-total", formatNum(data.total_scans));
-  setText("v-threats", formatNum(data.threats_detected));
-  setText("v-safe", formatNum(data.safe_sites));
-  setText("v-rate", data.detection_rate.toFixed(1) + "%");
-  setText("v-speed", data.avg_scan_duration ? data.avg_scan_duration.toFixed(0) + "ms" : "—");
-  setText("v-confidence", data.avg_confidence ? data.avg_confidence.toFixed(1) + "%" : "—");
+  animateCounter("v-total",   data.total_scans,       formatNum);
+  animateCounter("v-threats", data.threats_detected,  formatNum);
+  animateCounter("v-safe",    data.safe_sites,        formatNum);
+  animateCounter("v-rate",    data.detection_rate,    (v) => v.toFixed(1) + "%");
+  if (data.avg_scan_duration) {
+    animateCounter("v-speed", data.avg_scan_duration, (v) => Math.round(v) + "ms");
+  } else {
+    setText("v-speed", "—");
+  }
+  if (data.avg_confidence) {
+    animateCounter("v-confidence", data.avg_confidence, (v) => v.toFixed(1) + "%");
+  } else {
+    setText("v-confidence", "—");
+  }
   setText("v-total-trend", `+${data.daily_scans.at(-1)?.scans || 0} today`);
   setText("v-threat-trend", `${data.daily_scans.at(-1)?.threats || 0} today`);
 }
@@ -109,16 +120,16 @@ function renderDailyChart(dailyScans) {
         {
           label: "Scans",
           data: scans,
-          backgroundColor: "rgba(0,212,255,0.3)",
-          borderColor: "rgba(0,212,255,0.8)",
+          backgroundColor: "rgba(88,166,255,0.25)",
+          borderColor: "rgba(88,166,255,0.8)",
           borderWidth: 1,
           borderRadius: 4,
         },
         {
           label: "Threats",
           data: threats,
-          backgroundColor: "rgba(255,68,0,0.5)",
-          borderColor: "rgba(255,68,0,0.9)",
+          backgroundColor: "rgba(248,81,73,0.45)",
+          borderColor: "rgba(248,81,73,0.9)",
           borderWidth: 1,
           borderRadius: 4,
           type: "line",
@@ -131,7 +142,7 @@ function renderDailyChart(dailyScans) {
     options: {
       responsive: true, maintainAspectRatio: false,
       ...CHART_DEFAULTS,
-      plugins: { ...CHART_DEFAULTS.plugins, legend: { labels: { color: "#8888aa", font: { family: "Courier New", size: 10 } } } },
+      plugins: { ...CHART_DEFAULTS.plugins, legend: { labels: { color: "#8b949e", font: CHART_FONT } } },
     },
   });
 }
@@ -139,7 +150,7 @@ function renderDailyChart(dailyScans) {
 function renderThreatDistChart(dist) {
   const labels = Object.keys(dist).map(formatThreatType);
   const values = Object.values(dist);
-  const colors = Object.keys(dist).map((k) => THREAT_COLORS[k] || "#6666aa");
+  const colors = Object.keys(dist).map((k) => THREAT_COLORS[k] || "#8b949e");
 
   destroyChart("chart-threats");
   if (!labels.length) return;
@@ -159,7 +170,7 @@ function renderThreatDistChart(dist) {
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { position: "right", labels: { color: "#8888aa", font: { family: "Courier New", size: 10 }, boxWidth: 12 } },
+        legend: { position: "right", labels: { color: "#8b949e", font: CHART_FONT, boxWidth: 12 } },
       },
     },
   });
@@ -169,7 +180,7 @@ function renderRiskDistChart(dist) {
   const order = ["safe", "low", "medium", "high", "critical"];
   const labels = order.filter((k) => dist[k]);
   const values = labels.map((k) => dist[k]);
-  const colors = labels.map((k) => RISK_COLORS[k] || "#888888");
+  const colors = labels.map((k) => RISK_COLORS[k] || "#8b949e");
 
   destroyChart("chart-risk");
   if (!labels.length) return;
@@ -188,10 +199,10 @@ function renderRiskDistChart(dist) {
     options: {
       responsive: true, maintainAspectRatio: false,
       plugins: {
-        legend: { labels: { color: "#8888aa", font: { family: "Courier New", size: 10 }, boxWidth: 12 } },
+        legend: { labels: { color: "#8b949e", font: CHART_FONT, boxWidth: 12 } },
       },
       scales: {
-        r: { ticks: { color: "#55557a", backdropColor: "transparent" }, grid: { color: "#1a1a38" } },
+        r: { ticks: { color: "#484f58", backdropColor: "transparent" }, grid: { color: "#21262d" } },
       },
     },
   });
@@ -300,10 +311,10 @@ function renderPagination(count) {
   const pg = document.getElementById("history-pagination");
   const btns = [];
   if (historyPage > 0) {
-    btns.push(`<button class="page-btn" onclick="changePage(-1)">← Prev</button>`);
+    btns.push(`<button class="page-btn" onclick="changePage(-1)">&#8592; Prev</button>`);
   }
   if (count === PAGE_SIZE) {
-    btns.push(`<button class="page-btn" onclick="changePage(1)">Next →</button>`);
+    btns.push(`<button class="page-btn" onclick="changePage(1)">Next &#8594;</button>`);
   }
   pg.innerHTML = btns.join("");
 }
@@ -330,12 +341,12 @@ function renderAnalyticsCharts() {
       datasets: [{
         label: "Threats",
         data: daily.map((d) => d.threats),
-        borderColor: "#ff4400",
-        backgroundColor: "rgba(255,68,0,0.15)",
+        borderColor: "#f85149",
+        backgroundColor: "rgba(248,81,73,0.12)",
         tension: 0.4,
         fill: true,
         pointRadius: 3,
-        pointBackgroundColor: "#ff4400",
+        pointBackgroundColor: "#f85149",
       }],
     },
     options: { responsive: true, maintainAspectRatio: false, ...CHART_DEFAULTS },
@@ -345,7 +356,7 @@ function renderAnalyticsCharts() {
   const dist = analyticsData.threat_distribution || {};
   const catLabels = Object.keys(dist).map(formatThreatType);
   const catValues = Object.values(dist);
-  const catColors = Object.keys(dist).map((k) => THREAT_COLORS[k] || "#6666aa");
+  const catColors = Object.keys(dist).map((k) => THREAT_COLORS[k] || "#8b949e");
 
   destroyChart("chart-categories");
   if (catLabels.length) {
@@ -377,11 +388,18 @@ function renderAnalyticsCharts() {
     data: {
       labels,
       datasets: [
-        { label: "Safe", data: daily.map((d) => d.scans - d.threats), backgroundColor: "rgba(0,255,136,0.4)", stack: "s" },
-        { label: "Threats", data: daily.map((d) => d.threats), backgroundColor: "rgba(255,68,0,0.6)", stack: "s" },
+        { label: "Safe",    data: daily.map((d) => d.scans - d.threats), backgroundColor: "rgba(63,185,80,0.4)",  stack: "s" },
+        { label: "Threats", data: daily.map((d) => d.threats),           backgroundColor: "rgba(248,81,73,0.55)", stack: "s" },
       ],
     },
-    options: { responsive: true, maintainAspectRatio: false, ...CHART_DEFAULTS, scales: { ...CHART_DEFAULTS.scales, x: { ...CHART_DEFAULTS.scales.x, stacked: true }, y: { ...CHART_DEFAULTS.scales.y, stacked: true } } },
+    options: {
+      responsive: true, maintainAspectRatio: false, ...CHART_DEFAULTS,
+      scales: {
+        ...CHART_DEFAULTS.scales,
+        x: { ...CHART_DEFAULTS.scales.x, stacked: true },
+        y: { ...CHART_DEFAULTS.scales.y, stacked: true },
+      },
+    },
   });
 
   // Top threat domains
@@ -395,8 +413,8 @@ function renderAnalyticsCharts() {
         datasets: [{
           label: "Threats",
           data: topDomains.map((t) => t.count),
-          backgroundColor: "rgba(255,0,68,0.5)",
-          borderColor: "#ff0044",
+          backgroundColor: "rgba(248,81,73,0.45)",
+          borderColor: "#f85149",
           borderWidth: 1,
           borderRadius: 4,
         }],
@@ -439,6 +457,19 @@ function destroyChart(id) {
   if (charts[id]) { charts[id].destroy(); delete charts[id]; }
 }
 
+function animateCounter(id, endValue, formatter, duration = 900) {
+  const el = document.getElementById(id);
+  if (!el || isNaN(endValue)) return;
+  const start = performance.now();
+  (function tick(now) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = formatter(endValue * ease);
+    if (p < 1) requestAnimationFrame(tick);
+    else el.textContent = formatter(endValue);
+  })(start);
+}
+
 function formatThreatType(t) {
   const map = {
     phishing: "Phishing", fake_login: "Fake Login", fake_banking: "Fake Banking",
@@ -459,7 +490,7 @@ function formatTime(ts) {
 function formatNum(n) {
   if (n >= 1000000) return (n / 1000000).toFixed(1) + "M";
   if (n >= 1000) return (n / 1000).toFixed(1) + "K";
-  return String(n);
+  return String(Math.round(n));
 }
 
 function setText(id, val) {

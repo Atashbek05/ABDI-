@@ -13,17 +13,32 @@
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-logo">
-        <span class="logo-icon">🛡️</span>
+        <svg class="logo-svg" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#58a6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <polyline points="9 12 11 14 15 10"/>
+        </svg>
         <div>
           <div class="logo-title">CyberShield</div>
           <div class="logo-sub">AI DASHBOARD</div>
         </div>
       </div>
       <nav class="sidebar-nav">
-        <button class="nav-item active" data-view="overview">📊 Overview</button>
-        <button class="nav-item" data-view="threats">🚨 Threats</button>
-        <button class="nav-item" data-view="history">📋 History</button>
-        <button class="nav-item" data-view="analytics">📈 Analytics</button>
+        <button class="nav-item active" data-view="overview">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          <span class="nav-label">Overview</span>
+        </button>
+        <button class="nav-item" data-view="threats">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span class="nav-label">Threats</span>
+        </button>
+        <button class="nav-item" data-view="history">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          <span class="nav-label">History</span>
+        </button>
+        <button class="nav-item" data-view="analytics">
+          <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+          <span class="nav-label">Analytics</span>
+        </button>
       </nav>
       <div class="sidebar-footer">
         <div class="engine-status">
@@ -41,56 +56,77 @@
       <div class="topbar">
         <div class="topbar-title" id="view-title">Security Overview</div>
         <div class="topbar-actions">
-          <button class="tb-btn" id="refresh-btn">🔄 Refresh</button>
-          <button class="tb-btn tb-export" id="export-btn">📤 Export</button>
-          <div class="live-indicator"><span class="dot dot-blue pulse-dot"></span> LIVE</div>
+          <button class="tb-btn" id="refresh-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+            Refresh
+          </button>
+          <button class="tb-btn tb-export" id="export-btn">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            Export
+          </button>
+          <div class="live-indicator">
+            <span class="dot dot-blue pulse-dot"></span>
+            LIVE
+          </div>
         </div>
       </div>
 
-      <!-- View: Overview ─────────────────────────────────────────────── -->
+      <!-- View: Overview ──────────────────────────────────────────────────────── -->
       <div class="view active" id="view-overview">
 
         <!-- Stats row -->
         <div class="stats-row">
           <div class="stat-card">
-            <div class="stat-icon">🔍</div>
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            </div>
             <div class="stat-data">
               <div class="stat-num" id="v-total">—</div>
               <div class="stat-lbl">Total Scans</div>
+              <div class="stat-trend up" id="v-total-trend">+0</div>
             </div>
-            <div class="stat-trend up" id="v-total-trend">+0</div>
           </div>
           <div class="stat-card danger">
-            <div class="stat-icon">🚨</div>
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
             <div class="stat-data">
               <div class="stat-num" id="v-threats">—</div>
               <div class="stat-lbl">Threats Detected</div>
+              <div class="stat-trend" id="v-threat-trend">—</div>
             </div>
-            <div class="stat-trend" id="v-threat-trend">—</div>
           </div>
           <div class="stat-card safe">
-            <div class="stat-icon">✅</div>
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
             <div class="stat-data">
               <div class="stat-num" id="v-safe">—</div>
               <div class="stat-lbl">Safe Sites</div>
             </div>
           </div>
           <div class="stat-card warn">
-            <div class="stat-icon">📊</div>
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+            </div>
             <div class="stat-data">
               <div class="stat-num" id="v-rate">—</div>
               <div class="stat-lbl">Detection Rate</div>
             </div>
           </div>
           <div class="stat-card">
-            <div class="stat-icon">⚡</div>
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
             <div class="stat-data">
               <div class="stat-num" id="v-speed">—</div>
               <div class="stat-lbl">Avg Scan Speed</div>
             </div>
           </div>
           <div class="stat-card info">
-            <div class="stat-icon">🎯</div>
+            <div class="stat-icon">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+            </div>
             <div class="stat-data">
               <div class="stat-num" id="v-confidence">—</div>
               <div class="stat-lbl">Avg Confidence</div>
@@ -101,11 +137,17 @@
         <!-- Charts row -->
         <div class="charts-row">
           <div class="chart-card wide">
-            <div class="chart-title">📅 Daily Scan Activity (14 Days)</div>
+            <div class="chart-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              Daily Scan Activity (14 Days)
+            </div>
             <div class="chart-wrap"><canvas id="chart-daily"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">🎯 Threat Distribution</div>
+            <div class="chart-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+              Threat Distribution
+            </div>
             <div class="chart-wrap"><canvas id="chart-threats"></canvas></div>
           </div>
         </div>
@@ -113,7 +155,10 @@
         <!-- Bottom row -->
         <div class="bottom-row">
           <div class="table-card">
-            <div class="table-title">🚨 Recent Threats</div>
+            <div class="table-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              Recent Threats
+            </div>
             <div class="table-wrap">
               <table class="data-table" id="recent-threats-table">
                 <thead>
@@ -122,19 +167,24 @@
                   </tr>
                 </thead>
                 <tbody id="recent-threats-body">
-                  <tr><td colspan="5" class="loading-row">Loading...</td></tr>
+                  <tr class="skeleton-row"><td><div class="skeleton" style="width:80%;height:11px"></div></td><td><div class="skeleton" style="width:70%;height:11px"></div></td><td><div class="skeleton" style="width:55px;height:18px;border-radius:10px"></div></td><td><div class="skeleton" style="width:50%;height:11px"></div></td><td><div class="skeleton" style="width:60%;height:11px"></div></td></tr>
+                  <tr class="skeleton-row"><td><div class="skeleton" style="width:65%;height:11px"></div></td><td><div class="skeleton" style="width:80%;height:11px"></div></td><td><div class="skeleton" style="width:55px;height:18px;border-radius:10px"></div></td><td><div class="skeleton" style="width:50%;height:11px"></div></td><td><div class="skeleton" style="width:60%;height:11px"></div></td></tr>
+                  <tr class="skeleton-row"><td><div class="skeleton" style="width:75%;height:11px"></div></td><td><div class="skeleton" style="width:55%;height:11px"></div></td><td><div class="skeleton" style="width:55px;height:18px;border-radius:10px"></div></td><td><div class="skeleton" style="width:50%;height:11px"></div></td><td><div class="skeleton" style="width:60%;height:11px"></div></td></tr>
                 </tbody>
               </table>
             </div>
           </div>
           <div class="chart-card small">
-            <div class="chart-title">⚠ Risk Level Distribution</div>
+            <div class="chart-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+              Risk Level Distribution
+            </div>
             <div class="chart-wrap"><canvas id="chart-risk"></canvas></div>
           </div>
         </div>
       </div>
 
-      <!-- View: Threats ──────────────────────────────────────────────── -->
+      <!-- View: Threats ──────────────────────────────────────────────────────── -->
       <div class="view" id="view-threats">
         <div class="filter-bar">
           <select class="filter-select" id="threats-filter-type">
@@ -153,7 +203,7 @@
             <option value="medium">Medium</option>
             <option value="low">Low</option>
           </select>
-          <button class="filter-btn" id="threats-filter-btn">Apply</button>
+          <button class="filter-btn" id="threats-filter-btn">Apply Filters</button>
         </div>
         <div class="table-card full">
           <div class="table-wrap">
@@ -165,14 +215,14 @@
                 </tr>
               </thead>
               <tbody id="threats-body">
-                <tr><td colspan="6" class="loading-row">Loading...</td></tr>
+                <tr><td colspan="6" class="loading-row"><div class="skeleton" style="width:180px;height:11px;margin:0 auto;border-radius:4px"></div></td></tr>
               </tbody>
             </table>
           </div>
         </div>
       </div>
 
-      <!-- View: History ──────────────────────────────────────────────── -->
+      <!-- View: History ──────────────────────────────────────────────────────── -->
       <div class="view" id="view-history">
         <div class="filter-bar">
           <input type="text" class="filter-input" id="history-search" placeholder="Search domain or URL..." />
@@ -190,7 +240,7 @@
                 </tr>
               </thead>
               <tbody id="history-body">
-                <tr><td colspan="8" class="loading-row">Loading...</td></tr>
+                <tr><td colspan="8" class="loading-row"><div class="skeleton" style="width:180px;height:11px;margin:0 auto;border-radius:4px"></div></td></tr>
               </tbody>
             </table>
           </div>
@@ -198,23 +248,35 @@
         <div class="pagination" id="history-pagination"></div>
       </div>
 
-      <!-- View: Analytics ────────────────────────────────────────────── -->
+      <!-- View: Analytics ────────────────────────────────────────────────────── -->
       <div class="view" id="view-analytics">
         <div class="charts-grid">
           <div class="chart-card">
-            <div class="chart-title">📈 Threat Trend (14 days)</div>
+            <div class="chart-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              Threat Trend (14 days)
+            </div>
             <div class="chart-wrap"><canvas id="chart-trend"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">🎯 Attack Categories</div>
+            <div class="chart-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
+              Attack Categories
+            </div>
             <div class="chart-wrap"><canvas id="chart-categories"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">📊 Scans vs Threats</div>
+            <div class="chart-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
+              Scans vs Threats
+            </div>
             <div class="chart-wrap"><canvas id="chart-ratio"></canvas></div>
           </div>
           <div class="chart-card">
-            <div class="chart-title">⚡ Top Threat Domains</div>
+            <div class="chart-title">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+              Top Threat Domains
+            </div>
             <div class="chart-wrap"><canvas id="chart-domains"></canvas></div>
           </div>
         </div>
