@@ -9,6 +9,10 @@ document.addEventListener("DOMContentLoaded", async () => {
   await loadWhitelist();
   await loadBlacklist();
   setupListeners();
+
+  document.getElementById("back-btn").addEventListener("click", () => {
+    window.location.href = chrome.runtime.getURL("dashboard/dashboard.html");
+  });
 });
 
 // ── Load ─────────────────────────────────────────────────────────────────────
