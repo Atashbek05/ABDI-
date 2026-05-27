@@ -147,40 +147,40 @@ function buildOverlay(data, blocking) {
       </div>
 
       <h1 class="pd-title pd-title--${isBlocking ? "blocked" : "warning"}">
-        ${isBlocking ? "ACCESS BLOCKED" : "SECURITY ALERT"}
+        ${isBlocking ? "ДОСТУП ЗАБЛОКИРОВАН" : "УГРОЗА БЕЗОПАСНОСТИ"}
       </h1>
       <p class="pd-subtitle">
-        ${isBlacklisted ? "Known Phishing Domain — Blacklist Match" : "AI Phishing Detection System"}
+        ${isBlacklisted ? "Известный фишинговый домен — совпадение в чёрном списке" : "Система обнаружения фишинга AI"}
       </p>
 
       <div class="pd-alert-box pd-alert-box--${isBlocking ? "critical" : "danger"}">
         <span class="pd-alert-icon">${isBlocking ? "⛔" : "⚠"}</span>
         <p class="pd-alert-text">
-          ${isBlocking ? "THIS SITE IS ON THE PHISHING BLACKLIST" : "THREAT IDENTIFIED — DO NOT PROCEED"}
+          ${isBlocking ? "ЭТОТ САЙТ В ЧЁРНОМ СПИСКЕ ФИШИНГА" : "УГРОЗА ОБНАРУЖЕНА — НЕ ПРОДОЛЖАЙТЕ"}
         </p>
       </div>
 
       <div class="pd-stats">
         <div class="pd-stat">
-          <span class="pd-stat-label">VERDICT</span>
+          <span class="pd-stat-label">ВЕРДИКТ</span>
           <span class="pd-stat-value pd-danger">${prediction}</span>
         </div>
         <div class="pd-stat">
-          <span class="pd-stat-label">CONFIDENCE</span>
+          <span class="pd-stat-label">УВЕРЕННОСТЬ</span>
           <span class="pd-stat-value pd-${riskLevelClass(riskLevel)}">${confidence}%</span>
         </div>
         <div class="pd-stat">
-          <span class="pd-stat-label">THREAT LEVEL</span>
+          <span class="pd-stat-label">УРОВЕНЬ УГРОЗЫ</span>
           <span class="pd-stat-value pd-${riskLevelClass(threatLevel)}">${threatLevel}</span>
         </div>
       </div>
 
-      <p class="pd-url-label">⚠ Flagged URL</p>
+      <p class="pd-url-label">⚠ Подозрительный URL</p>
       <p class="pd-url">${escapeHtml(location.href)}</p>
 
       ${reasons.length > 0 ? `
       <div class="pd-reasons">
-        <p class="pd-reasons-label">🔍 THREAT INDICATORS — ${reasons.length} FOUND</p>
+        <p class="pd-reasons-label">🔍 ПРИЗНАКИ УГРОЗЫ — ${reasons.length} НАЙДЕНО</p>
         <ul class="pd-reasons-list">
           ${reasons.slice(0, 6).map((r, i) =>
             `<li class="pd-reason-item" style="--delay:${i * 60}ms">
@@ -188,7 +188,7 @@ function buildOverlay(data, blocking) {
              </li>`
           ).join("")}
           ${reasons.length > 6
-            ? `<li class="pd-reason-more">+${reasons.length - 6} more indicators detected</li>`
+            ? `<li class="pd-reason-more">+${reasons.length - 6} дополнительных признаков обнаружено</li>`
             : ""}
         </ul>
       </div>
@@ -196,17 +196,17 @@ function buildOverlay(data, blocking) {
 
       <div class="pd-actions">
         <button class="pd-btn pd-btn-safe" id="pd-go-back">
-          ← GO BACK TO SAFETY
+          ← ВЕРНУТЬСЯ НАЗАД
         </button>
         ${isBlocking
           ? `<button class="pd-btn pd-btn-forced" id="pd-dismiss-blocked">
-               ⚠ I UNDERSTAND THE RISK — PROCEED ANYWAY
+               ⚠ Я ПОНИМАЮ РИСК — ПРОДОЛЖИТЬ
              </button>`
           : `<button class="pd-btn pd-btn-proceed" id="pd-proceed">
-               PROCEED ANYWAY (UNSAFE)
+               ПРОДОЛЖИТЬ (ОПАСНО)
              </button>
              <button class="pd-btn pd-btn-close" id="pd-dismiss">
-               CLOSE WARNING
+               ЗАКРЫТЬ ПРЕДУПРЕЖДЕНИЕ
              </button>`
         }
       </div>
@@ -246,18 +246,18 @@ function showWarning(data, blocking = false) {
 
   overlay.querySelector("#pd-proceed")?.addEventListener("click", () => {
     const ok = confirm(
-      "⚠️ WARNING\n\nThis site has been flagged as a potential phishing attempt.\n\n" +
-      "Proceeding may expose your passwords, personal data, or financial information.\n\n" +
-      "Are you absolutely sure you want to continue?"
+      "⚠️ ПРЕДУПРЕЖДЕНИЕ\n\nЭтот сайт отмечен как потенциальная фишинговая угроза.\n\n" +
+      "Продолжение может раскрыть ваши пароли, персональные данные или финансовую информацию.\n\n" +
+      "Вы абсолютно уверены, что хотите продолжить?"
     );
     if (ok) hideWarning(true);
   });
 
   overlay.querySelector("#pd-dismiss-blocked")?.addEventListener("click", () => {
     const ok = confirm(
-      "🚫 CRITICAL RISK\n\nThis domain is on the KNOWN PHISHING BLACKLIST.\n\n" +
-      "Entering any information here is extremely dangerous.\n\n" +
-      "Are you ABSOLUTELY CERTAIN you want to proceed?"
+      "🚫 КРИТИЧЕСКИЙ РИСК\n\nЭтот домен находится в ИЗВЕСТНОМ ЧЁРНОМ СПИСКЕ ФИШИНГА.\n\n" +
+      "Ввод любой информации здесь крайне опасен.\n\n" +
+      "Вы АБСОЛЮТНО УВЕРЕНЫ, что хотите продолжить?"
     );
     if (ok) hideWarning(true);
   });

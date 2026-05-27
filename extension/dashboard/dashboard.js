@@ -96,8 +96,8 @@ function updateStatCards(data) {
   } else {
     setText("v-confidence", "—");
   }
-  setText("v-total-trend", `+${data.daily_scans.at(-1)?.scans || 0} today`);
-  setText("v-threat-trend", `${data.daily_scans.at(-1)?.threats || 0} today`);
+  setText("v-total-trend", `+${data.daily_scans.at(-1)?.scans || 0} сегодня`);
+  setText("v-threat-trend", `${data.daily_scans.at(-1)?.threats || 0} сегодня`);
 }
 
 function renderOverviewCharts(data) {
@@ -118,7 +118,7 @@ function renderDailyChart(dailyScans) {
       labels,
       datasets: [
         {
-          label: "Scans",
+          label: "Проверки",
           data: scans,
           backgroundColor: "rgba(88,166,255,0.25)",
           borderColor: "rgba(88,166,255,0.8)",
@@ -126,7 +126,7 @@ function renderDailyChart(dailyScans) {
           borderRadius: 4,
         },
         {
-          label: "Threats",
+          label: "Угрозы",
           data: threats,
           backgroundColor: "rgba(248,81,73,0.45)",
           borderColor: "rgba(248,81,73,0.9)",
@@ -211,7 +211,7 @@ function renderRiskDistChart(dist) {
 function renderRecentThreats(threats) {
   const tbody = document.getElementById("recent-threats-body");
   if (!threats.length) {
-    tbody.innerHTML = `<tr><td colspan="5" class="loading-row">No threats detected yet</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="5" class="loading-row">Угрозы ещё не обнаружены</td></tr>`;
     return;
   }
   tbody.innerHTML = threats.map((t) => `
@@ -241,14 +241,14 @@ async function loadThreats() {
     renderThreatsTable(threats);
   } catch (err) {
     document.getElementById("threats-body").innerHTML =
-      `<tr><td colspan="6" class="loading-row">Failed to load — is the backend running?</td></tr>`;
+      `<tr><td colspan="6" class="loading-row">Ошибка загрузки — запущен ли сервер?</td></tr>`;
   }
 }
 
 function renderThreatsTable(threats) {
   const tbody = document.getElementById("threats-body");
   if (!threats.length) {
-    tbody.innerHTML = `<tr><td colspan="6" class="loading-row">No threats match filter</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" class="loading-row">Угрозы по фильтру не найдены</td></tr>`;
     return;
   }
   tbody.innerHTML = threats.map((t, i) => `
@@ -283,14 +283,14 @@ async function loadHistory() {
     renderPagination(records.length);
   } catch (err) {
     document.getElementById("history-body").innerHTML =
-      `<tr><td colspan="8" class="loading-row">Failed to load</td></tr>`;
+      `<tr><td colspan="8" class="loading-row">Ошибка загрузки</td></tr>`;
   }
 }
 
 function renderHistoryTable(records) {
   const tbody = document.getElementById("history-body");
   if (!records.length) {
-    tbody.innerHTML = `<tr><td colspan="8" class="loading-row">No records found</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" class="loading-row">Записи не найдены</td></tr>`;
     return;
   }
   tbody.innerHTML = records.map((r, i) => `
@@ -298,7 +298,7 @@ function renderHistoryTable(records) {
       <td>${historyPage * PAGE_SIZE + i + 1}</td>
       <td class="url-cell" title="${escapeHtml(r.url)}">${escapeHtml(r.url)}</td>
       <td>${escapeHtml(r.domain)}</td>
-      <td><span class="badge ${r.is_safe ? "badge-safe" : "badge-" + (r.risk_level || "high")}">${r.is_safe ? "SAFE" : "THREAT"}</span></td>
+      <td><span class="badge ${r.is_safe ? "badge-safe" : "badge-" + (r.risk_level || "high")}">${r.is_safe ? "БЕЗОПАСНО" : "УГРОЗА"}</span></td>
       <td>${r.threat_type ? formatThreatType(r.threat_type) : "—"}</td>
       <td>${r.confidence ? r.confidence.toFixed(1) + "%" : "—"}</td>
       <td>${r.scan_duration_ms ? r.scan_duration_ms.toFixed(0) + "ms" : "—"}</td>
@@ -311,10 +311,10 @@ function renderPagination(count) {
   const pg = document.getElementById("history-pagination");
   const btns = [];
   if (historyPage > 0) {
-    btns.push(`<button class="page-btn" onclick="changePage(-1)">&#8592; Prev</button>`);
+    btns.push(`<button class="page-btn" onclick="changePage(-1)">&#8592; Назад</button>`);
   }
   if (count === PAGE_SIZE) {
-    btns.push(`<button class="page-btn" onclick="changePage(1)">Next &#8594;</button>`);
+    btns.push(`<button class="page-btn" onclick="changePage(1)">Вперёд &#8594;</button>`);
   }
   pg.innerHTML = btns.join("");
 }
@@ -339,7 +339,7 @@ function renderAnalyticsCharts() {
     data: {
       labels,
       datasets: [{
-        label: "Threats",
+        label: "Угрозы",
         data: daily.map((d) => d.threats),
         borderColor: "#f85149",
         backgroundColor: "rgba(248,81,73,0.12)",
@@ -365,7 +365,7 @@ function renderAnalyticsCharts() {
       data: {
         labels: catLabels,
         datasets: [{
-          label: "Count",
+          label: "Количество",
           data: catValues,
           backgroundColor: catColors.map((c) => c + "99"),
           borderColor: catColors,
@@ -388,8 +388,8 @@ function renderAnalyticsCharts() {
     data: {
       labels,
       datasets: [
-        { label: "Safe",    data: daily.map((d) => d.scans - d.threats), backgroundColor: "rgba(63,185,80,0.4)",  stack: "s" },
-        { label: "Threats", data: daily.map((d) => d.threats),           backgroundColor: "rgba(248,81,73,0.55)", stack: "s" },
+        { label: "Безопасные",   data: daily.map((d) => d.scans - d.threats), backgroundColor: "rgba(63,185,80,0.4)",  stack: "s" },
+        { label: "Угрозы",       data: daily.map((d) => d.threats),           backgroundColor: "rgba(248,81,73,0.55)", stack: "s" },
       ],
     },
     options: {
@@ -411,7 +411,7 @@ function renderAnalyticsCharts() {
       data: {
         labels: topDomains.map((t) => t.domain),
         datasets: [{
-          label: "Threats",
+          label: "Угрозы",
           data: topDomains.map((t) => t.count),
           backgroundColor: "rgba(248,81,73,0.45)",
           borderColor: "#f85149",
@@ -439,7 +439,7 @@ async function exportData() {
       .join("\n");
     download("cybershield-export.csv", csv);
   } catch (err) {
-    alert("Export failed: " + err.message);
+    alert("Ошибка экспорта: " + err.message);
   }
 }
 
@@ -472,9 +472,9 @@ function animateCounter(id, endValue, formatter, duration = 900) {
 
 function formatThreatType(t) {
   const map = {
-    phishing: "Phishing", fake_login: "Fake Login", fake_banking: "Fake Banking",
-    crypto_scam: "Crypto Scam", fake_payment: "Fake Payment", malware: "Malware",
-    scam: "Scam", suspicious_redirect: "Redirect", suspicious: "Suspicious", safe: "Safe",
+    phishing: "Фишинг", fake_login: "Фейковый вход", fake_banking: "Фейковый банк",
+    crypto_scam: "Крипто-мошенничество", fake_payment: "Фейковый платёж", malware: "Вредоносное ПО",
+    scam: "Мошенничество", suspicious_redirect: "Перенаправление", suspicious: "Подозрительно", safe: "Безопасно",
   };
   return map[t] || t || "—";
 }

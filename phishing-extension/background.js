@@ -59,14 +59,14 @@ function invalidateCache(url) {
 // ── Badge management ──────────────────────────────────────────────────────────
 
 const BADGE_CFG = {
-  safe:       { text: "✓",   color: "#00cc66", title: "Safe — No threats detected" },
-  whitelist:  { text: "✓",   color: "#00aaff", title: "Trusted — Whitelisted domain" },
-  suspicious: { text: "!",   color: "#ffaa00", title: "Suspicious — Proceed with caution" },
-  danger:     { text: "✕",   color: "#ff1a1a", title: "Danger — Phishing detected" },
-  blocked:    { text: "BLK", color: "#cc0000", title: "Blocked — Known phishing domain" },
-  checking:   { text: "...", color: "#3366ff", title: "Scanning…" },
-  error:      { text: "?",   color: "#555555", title: "Error — Backend unreachable" },
-  disabled:   { text: "OFF", color: "#444444", title: "Protection disabled" },
+  safe:       { text: "✓",   color: "#00cc66", title: "Безопасно — Угрозы не обнаружены" },
+  whitelist:  { text: "✓",   color: "#00aaff", title: "Доверенный — Домен в белом списке" },
+  suspicious: { text: "!",   color: "#ffaa00", title: "Подозрительно — Соблюдайте осторожность" },
+  danger:     { text: "✕",   color: "#ff1a1a", title: "Опасно — Фишинг обнаружен" },
+  blocked:    { text: "БЛК", color: "#cc0000", title: "Заблокировано — Известный фишинговый домен" },
+  checking:   { text: "...", color: "#3366ff", title: "Сканирование…" },
+  error:      { text: "?",   color: "#555555", title: "Ошибка — Сервер недоступен" },
+  disabled:   { text: "ВЫКЛ", color: "#444444", title: "Защита отключена" },
 };
 
 function setBadge(tabId, status) {
@@ -145,8 +145,8 @@ function showThreatNotification(url, result) {
   chrome.notifications.create(`threat_${Date.now()}`, {
     type:     "basic",
     iconUrl:  "icons/icon48.png",
-    title:    isBlacklisted ? "🚫 Known Phishing Domain Blocked" : "⚠️ Phishing Threat Detected",
-    message:  `${url}\nRisk: ${(result.risk_level ?? "HIGH").toUpperCase()} — Confidence: ${confidence}%${firstReason}`,
+    title:    isBlacklisted ? "🚫 Известный фишинговый домен заблокирован" : "⚠️ Фишинговая угроза обнаружена",
+    message:  `${url}\nРиск: ${(result.risk_level ?? "HIGH").toUpperCase()} — Уверенность: ${confidence}%${firstReason}`,
     priority: 2,
   });
 }

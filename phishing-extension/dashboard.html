@@ -399,15 +399,15 @@
   <!-- Loading overlay -->
   <div class="overlay" id="overlay">
     <div class="spin-large"></div>
-    <div style="font-size:10px;color:#444;letter-spacing:3px;text-transform:uppercase">Loading Analytics…</div>
+    <div style="font-size:10px;color:#444;letter-spacing:3px;text-transform:uppercase">Загрузка аналитики…</div>
   </div>
 
   <!-- Header -->
   <div class="header">
     <div class="header-icon">🛡</div>
     <div>
-      <div class="header-title">THREAT ANALYTICS</div>
-      <div class="header-sub">AI Phishing Detection Dashboard</div>
+      <div class="header-title">АНАЛИТИКА УГРОЗ</div>
+      <div class="header-sub">Панель обнаружения фишинга AI</div>
     </div>
     <div class="header-right">
       <span class="last-updated" id="lastUpdated"></span>
@@ -415,7 +415,7 @@
         <div class="status-dot"></div>
         <span id="backendPillLabel">Offline</span>
       </div>
-      <button class="refresh-btn" id="refreshBtn">↺ Refresh</button>
+      <button class="refresh-btn" id="refreshBtn">↺ Обновить</button>
     </div>
   </div>
 
@@ -423,47 +423,47 @@
   <div class="main" id="mainContent" style="display:none">
 
     <!-- ─ Stats ─ -->
-    <div class="section-title">Detection Overview</div>
+    <div class="section-title">Обзор обнаружений</div>
     <div class="stat-grid">
       <div class="stat-card c-total">
         <div class="stat-icon">🌐</div>
-        <div class="stat-label">Total Scanned</div>
+        <div class="stat-label">Всего проверено</div>
         <div class="stat-value" id="sTotal">—</div>
-        <div class="stat-sub">All-time URL scans</div>
+        <div class="stat-sub">Все URL-проверки</div>
       </div>
       <div class="stat-card c-phishing">
         <div class="stat-icon">🚨</div>
-        <div class="stat-label">Phishing Detected</div>
+        <div class="stat-label">Фишинг обнаружен</div>
         <div class="stat-value" id="sPhishing">—</div>
-        <div class="stat-sub" id="sPhishingPct">—% detection rate</div>
+        <div class="stat-sub" id="sPhishingPct">—% уровень обнаружения</div>
       </div>
       <div class="stat-card c-safe">
         <div class="stat-icon">✔</div>
-        <div class="stat-label">Safe Sites</div>
+        <div class="stat-label">Безопасные сайты</div>
         <div class="stat-value" id="sSafe">—</div>
-        <div class="stat-sub" id="sSafePct">—% of total</div>
+        <div class="stat-sub" id="sSafePct">—% от общего</div>
       </div>
       <div class="stat-card c-susp">
         <div class="stat-icon">⚠</div>
-        <div class="stat-label">Suspicious</div>
+        <div class="stat-label">Подозрительные</div>
         <div class="stat-value" id="sSusp">—</div>
-        <div class="stat-sub" id="sAvgConf">Avg confidence: —%</div>
+        <div class="stat-sub" id="sAvgConf">Средняя уверенность: —%</div>
       </div>
     </div>
 
     <!-- ─ Charts ─ -->
-    <div class="section-title">Threat Distribution &amp; Confidence Trends</div>
+    <div class="section-title">Распределение угроз &amp; тренды уверенности</div>
     <div class="charts-grid">
 
       <div class="chart-card">
-        <div class="chart-label">Detection Distribution</div>
+        <div class="chart-label">Распределение обнаружений</div>
         <div class="chart-wrap" style="height:240px;display:flex;align-items:center;justify-content:center">
           <canvas id="donutChart" style="max-height:240px"></canvas>
         </div>
       </div>
 
       <div class="chart-card">
-        <div class="chart-label">Recent Scan Confidence Levels (last 20)</div>
+        <div class="chart-label">Уровни уверенности последних проверок (последние 20)</div>
         <div class="chart-wrap" style="height:240px">
           <canvas id="barChart" style="max-height:240px"></canvas>
         </div>
@@ -472,32 +472,32 @@
     </div>
 
     <!-- ─ Intelligence ─ -->
-    <div class="section-title">Threat Intelligence</div>
+    <div class="section-title">Разведка угроз</div>
     <div class="intel-grid">
 
       <div class="intel-card">
-        <div class="intel-title">⚠ Top Threat Indicators</div>
+        <div class="intel-title">⚠ Основные признаки угроз</div>
         <div id="threatsList">
-          <div class="state-msg" style="padding:20px;font-size:10px;color:#333">No phishing threats recorded yet</div>
+          <div class="state-msg" style="padding:20px;font-size:10px;color:#333">Фишинговые угрозы ещё не зафиксированы</div>
         </div>
       </div>
 
       <div class="intel-card">
-        <div class="intel-title">🤖 AI Detection Statistics</div>
+        <div class="intel-title">🤖 Статистика обнаружения AI</div>
         <div id="aiStats"></div>
       </div>
 
     </div>
 
     <!-- ─ Recent scans ─ -->
-    <div class="section-title">Recent Scans</div>
+    <div class="section-title">Последние проверки</div>
     <div class="table-card">
       <div class="table-head-bar">
-        <span>📋 Scan History</span>
-        <span id="tableCount" style="color:#333">— entries</span>
+        <span>📋 История проверок</span>
+        <span id="tableCount" style="color:#333">— записей</span>
       </div>
       <div id="tableBody">
-        <div class="state-msg" style="padding:32px">No scans yet</div>
+        <div class="state-msg" style="padding:32px">Проверок ещё нет</div>
       </div>
     </div>
 
@@ -507,8 +507,8 @@
   <div id="offlineState" style="display:none">
     <div class="state-msg" style="padding:100px 20px">
       <div class="state-icon">🔌</div>
-      <div class="state-title">Backend Offline</div>
-      <div class="state-sub">Start the detection server to view analytics</div>
+      <div class="state-title">Сервер недоступен</div>
+      <div class="state-sub">Запустите сервер для просмотра аналитики</div>
       <div class="state-cmd">uvicorn main:app --reload</div>
     </div>
   </div>
@@ -569,7 +569,7 @@
       const pill  = document.getElementById("backendPill");
       const label = document.getElementById("backendPillLabel");
       pill.className  = `backend-pill ${online ? "online" : "offline"}`;
-      label.textContent = online ? "Online" : "Offline";
+      label.textContent = online ? "Онлайн" : "Офлайн";
     }
 
     // ── Data fetching with cache ───────────────────────────────────────────────
@@ -623,9 +623,9 @@
       animateNumber(document.getElementById("sSafe"),     sf);
       animateNumber(document.getElementById("sSusp"),     su);
 
-      document.getElementById("sPhishingPct").textContent = `${pct(ph, total)}% detection rate`;
-      document.getElementById("sSafePct").textContent     = `${pct(sf, total)}% of total`;
-      document.getElementById("sAvgConf").textContent     = `Avg confidence: ${stats.average_confidence || 0}%`;
+      document.getElementById("sPhishingPct").textContent = `${pct(ph, total)}% уровень обнаружения`;
+      document.getElementById("sSafePct").textContent     = `${pct(sf, total)}% от общего`;
+      document.getElementById("sAvgConf").textContent     = `Средняя уверенность: ${stats.average_confidence || 0}%`;
     }
 
     // ── Threat indicators ──────────────────────────────────────────────────────
@@ -634,7 +634,7 @@
       const el = document.getElementById("threatsList");
       const threats = stats.most_common_threats || [];
       if (threats.length === 0) {
-        el.innerHTML = '<div style="padding:16px;font-size:10px;color:#333;text-align:center">No phishing threats recorded yet</div>';
+        el.innerHTML = '<div style="padding:16px;font-size:10px;color:#333;text-align:center">Фишинговые угрозы ещё не зафиксированы</div>';
         return;
       }
       el.innerHTML = threats.map((t, i) =>
@@ -652,11 +652,11 @@
       const sf    = stats.safe_detected    || 0;
 
       const items = [
-        { icon: "🌐", label: "Total URLs Analysed",  value: total },
-        { icon: "🎯", label: "Threat Detection Rate", value: `${pct(ph, total)}%` },
-        { icon: "📊", label: "Average Confidence",    value: `${stats.average_confidence || 0}%` },
-        { icon: "✅", label: "Safe Site Rate",         value: `${pct(sf, total)}%` },
-        { icon: "⚠",  label: "Suspicious Flags",      value: stats.suspicious_detected || 0 },
+        { icon: "🌐", label: "Всего проанализировано URL",  value: total },
+        { icon: "🎯", label: "Уровень обнаружения угроз",  value: `${pct(ph, total)}%` },
+        { icon: "📊", label: "Средняя уверенность",        value: `${stats.average_confidence || 0}%` },
+        { icon: "✅", label: "Доля безопасных сайтов",     value: `${pct(sf, total)}%` },
+        { icon: "⚠",  label: "Подозрительные метки",       value: stats.suspicious_detected || 0 },
       ];
 
       document.getElementById("aiStats").innerHTML = items.map((item, i) =>
@@ -682,7 +682,7 @@
       donutChart = new Chart(ctx, {
         type: "doughnut",
         data: {
-          labels: ["Safe", "Suspicious", "Phishing"],
+          labels: ["Безопасные", "Подозрительные", "Фишинг"],
           datasets: [{
             data: [
               stats.safe_detected       || 0,
@@ -746,7 +746,7 @@
         data: {
           labels: recent.map((_, i) => `#${i + 1}`),
           datasets: [{
-            label: "Confidence %",
+            label: "Уверенность %",
             data: recent.map(s => s.confidence),
             backgroundColor: bgColors,
             borderColor: bgColors.map(c => c.replace("0.75", "1")),
@@ -803,10 +803,10 @@
 
     function renderTable(scans) {
       const container = document.getElementById("tableBody");
-      document.getElementById("tableCount").textContent = `${scans.length} entries`;
+      document.getElementById("tableCount").textContent = `${scans.length} записей`;
 
       if (scans.length === 0) {
-        container.innerHTML = '<div class="state-msg" style="padding:32px">No scans recorded yet</div>';
+        container.innerHTML = '<div class="state-msg" style="padding:32px">Проверки не зафиксированы</div>';
         return;
       }
 
@@ -832,9 +832,9 @@
           <thead>
             <tr>
               <th>URL</th>
-              <th>Risk</th>
-              <th>Confidence</th>
-              <th>Time</th>
+              <th>Риск</th>
+              <th>Уверенность</th>
+              <th>Время</th>
             </tr>
           </thead>
           <tbody>${rows}</tbody>
@@ -846,12 +846,12 @@
     async function render(force = false) {
       const btn = document.getElementById("refreshBtn");
       btn.disabled = true;
-      btn.textContent = "↺ Loading…";
+      btn.textContent = "↺ Загрузка…";
 
       const { stats, history, online } = await fetchData(force);
 
       btn.disabled = false;
-      btn.textContent = "↺ Refresh";
+      btn.textContent = "↺ Обновить";
       setOnline(online);
 
       // Dismiss loading overlay with fade
@@ -869,7 +869,7 @@
       document.getElementById("mainContent").style.display  = "block";
 
       const now = new Date().toLocaleTimeString();
-      document.getElementById("lastUpdated").textContent = `Updated ${now}`;
+      document.getElementById("lastUpdated").textContent = `Обновлено ${now}`;
 
       if (stats) {
         renderStats(stats);

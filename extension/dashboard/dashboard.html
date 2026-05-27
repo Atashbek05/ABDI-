@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CyberShield AI — Dashboard</title>
+  <title>CyberShield AI — Панель управления</title>
   <link rel="stylesheet" href="dashboard.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 </head>
@@ -19,31 +19,31 @@
         </svg>
         <div>
           <div class="logo-title">CyberShield</div>
-          <div class="logo-sub">AI DASHBOARD</div>
+          <div class="logo-sub">AI ПАНЕЛЬ УПРАВЛЕНИЯ</div>
         </div>
       </div>
       <nav class="sidebar-nav">
         <button class="nav-item active" data-view="overview">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-          <span class="nav-label">Overview</span>
+          <span class="nav-label">Обзор</span>
         </button>
         <button class="nav-item" data-view="threats">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-          <span class="nav-label">Threats</span>
+          <span class="nav-label">Угрозы</span>
         </button>
         <button class="nav-item" data-view="history">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          <span class="nav-label">History</span>
+          <span class="nav-label">История</span>
         </button>
         <button class="nav-item" data-view="analytics">
           <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-          <span class="nav-label">Analytics</span>
+          <span class="nav-label">Аналитика</span>
         </button>
       </nav>
       <div class="sidebar-footer">
         <div class="engine-status">
           <span class="dot dot-green"></span>
-          <span>Engine Active</span>
+          <span>Движок активен</span>
         </div>
         <div class="version-tag">v2.0.0</div>
       </div>
@@ -54,19 +54,19 @@
 
       <!-- Top bar -->
       <div class="topbar">
-        <div class="topbar-title" id="view-title">Security Overview</div>
+        <div class="topbar-title" id="view-title">Обзор безопасности</div>
         <div class="topbar-actions">
           <button class="tb-btn" id="refresh-btn">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-            Refresh
+            Обновить
           </button>
           <button class="tb-btn tb-export" id="export-btn">
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-            Export
+            Экспорт
           </button>
           <div class="live-indicator">
             <span class="dot dot-blue pulse-dot"></span>
-            LIVE
+            ОНЛАЙН
           </div>
         </div>
       </div>
@@ -82,7 +82,7 @@
             </div>
             <div class="stat-data">
               <div class="stat-num" id="v-total">—</div>
-              <div class="stat-lbl">Total Scans</div>
+              <div class="stat-lbl">Всего проверок</div>
               <div class="stat-trend up" id="v-total-trend">+0</div>
             </div>
           </div>
@@ -92,7 +92,7 @@
             </div>
             <div class="stat-data">
               <div class="stat-num" id="v-threats">—</div>
-              <div class="stat-lbl">Threats Detected</div>
+              <div class="stat-lbl">Угроз обнаружено</div>
               <div class="stat-trend" id="v-threat-trend">—</div>
             </div>
           </div>
@@ -102,7 +102,7 @@
             </div>
             <div class="stat-data">
               <div class="stat-num" id="v-safe">—</div>
-              <div class="stat-lbl">Safe Sites</div>
+              <div class="stat-lbl">Безопасных сайтов</div>
             </div>
           </div>
           <div class="stat-card warn">
@@ -111,7 +111,7 @@
             </div>
             <div class="stat-data">
               <div class="stat-num" id="v-rate">—</div>
-              <div class="stat-lbl">Detection Rate</div>
+              <div class="stat-lbl">Уровень обнаружения</div>
             </div>
           </div>
           <div class="stat-card">
@@ -120,7 +120,7 @@
             </div>
             <div class="stat-data">
               <div class="stat-num" id="v-speed">—</div>
-              <div class="stat-lbl">Avg Scan Speed</div>
+              <div class="stat-lbl">Ср. скорость проверки</div>
             </div>
           </div>
           <div class="stat-card info">
@@ -129,7 +129,7 @@
             </div>
             <div class="stat-data">
               <div class="stat-num" id="v-confidence">—</div>
-              <div class="stat-lbl">Avg Confidence</div>
+              <div class="stat-lbl">Ср. уверенность</div>
             </div>
           </div>
         </div>
@@ -139,14 +139,14 @@
           <div class="chart-card wide">
             <div class="chart-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              Daily Scan Activity (14 Days)
+              Ежедневная активность (14 дней)
             </div>
             <div class="chart-wrap"><canvas id="chart-daily"></canvas></div>
           </div>
           <div class="chart-card">
             <div class="chart-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
-              Threat Distribution
+              Распределение угроз
             </div>
             <div class="chart-wrap"><canvas id="chart-threats"></canvas></div>
           </div>
@@ -157,13 +157,13 @@
           <div class="table-card">
             <div class="table-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              Recent Threats
+              Последние угрозы
             </div>
             <div class="table-wrap">
               <table class="data-table" id="recent-threats-table">
                 <thead>
                   <tr>
-                    <th>Domain</th><th>Threat Type</th><th>Risk</th><th>Confidence</th><th>Time</th>
+                    <th>Домен</th><th>Тип угрозы</th><th>Риск</th><th>Уверенность</th><th>Время</th>
                   </tr>
                 </thead>
                 <tbody id="recent-threats-body">
@@ -177,7 +177,7 @@
           <div class="chart-card small">
             <div class="chart-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
-              Risk Level Distribution
+              Распределение уровней риска
             </div>
             <div class="chart-wrap"><canvas id="chart-risk"></canvas></div>
           </div>
@@ -188,30 +188,30 @@
       <div class="view" id="view-threats">
         <div class="filter-bar">
           <select class="filter-select" id="threats-filter-type">
-            <option value="">All Types</option>
-            <option value="phishing">Phishing</option>
-            <option value="fake_login">Fake Login</option>
-            <option value="fake_banking">Fake Banking</option>
-            <option value="crypto_scam">Crypto Scam</option>
-            <option value="malware">Malware</option>
-            <option value="scam">Scam</option>
+            <option value="">Все типы</option>
+            <option value="phishing">Фишинг</option>
+            <option value="fake_login">Фейковый вход</option>
+            <option value="fake_banking">Фейковый банк</option>
+            <option value="crypto_scam">Крипто-мошенничество</option>
+            <option value="malware">Вредоносное ПО</option>
+            <option value="scam">Мошенничество</option>
           </select>
           <select class="filter-select" id="threats-filter-risk">
-            <option value="">All Risk Levels</option>
-            <option value="critical">Critical</option>
-            <option value="high">High</option>
-            <option value="medium">Medium</option>
-            <option value="low">Low</option>
+            <option value="">Все уровни риска</option>
+            <option value="critical">Критический</option>
+            <option value="high">Высокий</option>
+            <option value="medium">Средний</option>
+            <option value="low">Низкий</option>
           </select>
-          <button class="filter-btn" id="threats-filter-btn">Apply Filters</button>
+          <button class="filter-btn" id="threats-filter-btn">Применить фильтры</button>
         </div>
         <div class="table-card full">
           <div class="table-wrap">
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>#</th><th>Domain</th><th>Threat Type</th>
-                  <th>Risk Level</th><th>Confidence</th><th>Timestamp</th>
+                  <th>#</th><th>Домен</th><th>Тип угрозы</th>
+                  <th>Уровень риска</th><th>Уверенность</th><th>Время</th>
                 </tr>
               </thead>
               <tbody id="threats-body">
@@ -225,9 +225,9 @@
       <!-- View: History ──────────────────────────────────────────────────────── -->
       <div class="view" id="view-history">
         <div class="filter-bar">
-          <input type="text" class="filter-input" id="history-search" placeholder="Search domain or URL..." />
+          <input type="text" class="filter-input" id="history-search" placeholder="Поиск по домену или URL..." />
           <label class="filter-check">
-            <input type="checkbox" id="history-threats-only" /> Threats only
+            <input type="checkbox" id="history-threats-only" /> Только угрозы
           </label>
         </div>
         <div class="table-card full">
@@ -235,8 +235,8 @@
             <table class="data-table">
               <thead>
                 <tr>
-                  <th>#</th><th>URL</th><th>Domain</th><th>Status</th>
-                  <th>Threat Type</th><th>Confidence</th><th>Scan Time</th><th>Timestamp</th>
+                  <th>#</th><th>URL</th><th>Домен</th><th>Статус</th>
+                  <th>Тип угрозы</th><th>Уверенность</th><th>Время проверки</th><th>Время</th>
                 </tr>
               </thead>
               <tbody id="history-body">
@@ -254,28 +254,28 @@
           <div class="chart-card">
             <div class="chart-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-              Threat Trend (14 days)
+              Тренд угроз (14 дней)
             </div>
             <div class="chart-wrap"><canvas id="chart-trend"></canvas></div>
           </div>
           <div class="chart-card">
             <div class="chart-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/></svg>
-              Attack Categories
+              Категории атак
             </div>
             <div class="chart-wrap"><canvas id="chart-categories"></canvas></div>
           </div>
           <div class="chart-card">
             <div class="chart-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>
-              Scans vs Threats
+              Проверки против угроз
             </div>
             <div class="chart-wrap"><canvas id="chart-ratio"></canvas></div>
           </div>
           <div class="chart-card">
             <div class="chart-title">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-              Top Threat Domains
+              Топ доменов угроз
             </div>
             <div class="chart-wrap"><canvas id="chart-domains"></canvas></div>
           </div>

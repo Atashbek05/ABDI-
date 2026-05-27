@@ -41,7 +41,7 @@ async function loadWhitelist() {
       return;
     }
   } catch (_) {}
-  $("whitelist-list").innerHTML = `<div class="list-empty">Server offline — changes won't persist</div>`;
+  $("whitelist-list").innerHTML = `<div class="list-empty">Сервер недоступен — изменения не сохранятся</div>`;
 }
 
 async function loadBlacklist() {
@@ -53,13 +53,13 @@ async function loadBlacklist() {
       return;
     }
   } catch (_) {}
-  $("blacklist-list").innerHTML = `<div class="list-empty">Server offline — changes won't persist</div>`;
+  $("blacklist-list").innerHTML = `<div class="list-empty">Сервер недоступен — изменения не сохранятся</div>`;
 }
 
 function renderDomainList(containerId, entries, removeFn, type) {
   const container = $(containerId);
   if (!entries.length) {
-    container.innerHTML = `<div class="list-empty">No entries</div>`;
+    container.innerHTML = `<div class="list-empty">Нет записей</div>`;
     return;
   }
   container.innerHTML = entries
@@ -67,7 +67,7 @@ function renderDomainList(containerId, entries, removeFn, type) {
       (e) => `
       <div class="domain-tag" id="tag-${type}-${CSS.escape(e.domain)}">
         <span class="domain-name">${escapeHtml(e.domain)}</span>
-        <button class="domain-remove" data-domain="${escapeHtml(e.domain)}" data-type="${type}" title="Remove">✕</button>
+        <button class="domain-remove" data-domain="${escapeHtml(e.domain)}" data-type="${type}" title="Удалить">✕</button>
       </div>`
     )
     .join("");
@@ -93,7 +93,7 @@ async function addToWhitelist(domain) {
       loadWhitelist();
     }
   } catch (_) {
-    alert("Server offline — cannot save");
+    alert("Сервер недоступен — невозможно сохранить");
   }
 }
 
@@ -115,7 +115,7 @@ async function addToBlacklist(domain) {
       loadBlacklist();
     }
   } catch (_) {
-    alert("Server offline — cannot save");
+    alert("Сервер недоступен — невозможно сохранить");
   }
 }
 
@@ -141,7 +141,7 @@ async function saveSettings() {
   });
 
   const msg = $("save-msg");
-  msg.textContent = "✓ Settings saved!";
+  msg.textContent = "✓ Настройки сохранены!";
   setTimeout(() => { msg.textContent = ""; }, 3000);
 }
 
@@ -151,7 +151,7 @@ async function testConnection() {
   const apiUrl = $("s-api-url").value.trim().replace(/\/$/, "");
   const status = $("connection-status");
   status.className = "connection-status";
-  status.textContent = "Testing…";
+  status.textContent = "Проверка…";
   status.style.display = "block";
 
   try {
@@ -159,20 +159,20 @@ async function testConnection() {
     if (resp.ok) {
       const data = await resp.json();
       status.className = "connection-status ok";
-      status.textContent = `✓ Connected — ${data.service} v${data.version} (${data.ml_model})`;
+      status.textContent = `✓ Подключено — ${data.service} v${data.version} (${data.ml_model})`;
     } else {
       status.className = "connection-status fail";
-      status.textContent = `✗ Server returned HTTP ${resp.status} — check server logs`;
+      status.textContent = `✗ Сервер вернул HTTP ${resp.status} — проверьте логи сервера`;
     }
   } catch (err) {
     status.className = "connection-status fail";
     if (err instanceof TypeError) {
       // Network-level failure: server not running or wrong host
-      status.textContent = `✗ Backend not running — start the server (${apiUrl})`;
+      status.textContent = `✗ Backend не запущен — запустите сервер (${apiUrl})`;
     } else if (err.name === "AbortError") {
-      status.textContent = "✗ Connection timed out (5 s) — server may be overloaded or unreachable";
+      status.textContent = "✗ Превышено время ожидания (5 с) — сервер перегружен или недоступен";
     } else {
-      status.textContent = `✗ Cannot reach server — verify the URL is correct`;
+      status.textContent = `✗ Не удалось достучаться до сервера — проверьте правильность URL`;
     }
   }
 }
@@ -187,7 +187,7 @@ async function exportReport() {
     const csv = buildCSV(history);
     downloadFile("cybershield-report.csv", csv, "text/csv");
   } catch (err) {
-    alert("Export failed: " + err.message);
+    alert("Ошибка экспорта: " + err.message);
   }
 }
 
@@ -217,14 +217,14 @@ function setupListeners() {
   $("export-btn").addEventListener("click", exportReport);
 
   $("clear-history-btn").addEventListener("click", async () => {
-    if (!confirm("Clear all scan history?")) return;
+    if (!confirm("Очистить всю историю проверок?")) return;
     try {
       await fetch(`${API_BASE}/history`, { method: "DELETE" });
       await chrome.storage.local.set({ scanHistory: [], totalScans: 0, totalThreats: 0 });
-      alert("History cleared.");
+      alert("История очищена.");
     } catch (_) {
       await chrome.storage.local.set({ scanHistory: [], totalScans: 0, totalThreats: 0 });
-      alert("Local history cleared (server offline).");
+      alert("Локальная история очищена (сервер офлайн).");
     }
   });
 

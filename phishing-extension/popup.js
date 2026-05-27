@@ -99,8 +99,8 @@ async function pingBackend() {
 function setBackendStatus(state) {
   el.backendStatus.className = `backend-status ${state}`;
   el.backendLabel.textContent =
-    state === "online"  ? "Online"  :
-    state === "offline" ? "Offline" : "—";
+    state === "online"  ? "Онлайн"  :
+    state === "offline" ? "Офлайн" : "—";
 }
 
 // ── Scan tab render states ────────────────────────────────────────────────────
@@ -109,7 +109,7 @@ function renderChecking() {
   el.resultCard.className = "result-card checking";
   el.badgeIcon.textContent = "⏳";
   el.badgeLabel.className  = "badge-label checking";
-  el.badgeLabel.textContent = "SCANNING…";
+  el.badgeLabel.textContent = "СКАНИРОВАНИЕ…";
   el.metricsGrid.style.display    = "none";
   el.confidenceWrap.style.display = "none";
   el.reasonsSection.style.display = "none";
@@ -119,11 +119,11 @@ function renderError(message) {
   el.resultCard.className = "result-card error";
   el.badgeIcon.textContent = "✖";
   el.badgeLabel.className  = "badge-label error";
-  el.badgeLabel.textContent = "ERROR";
+  el.badgeLabel.textContent = "ОШИБКА";
   el.metricsGrid.style.display = "grid";
-  el.metricVerdict.textContent  = "N/A";
+  el.metricVerdict.textContent  = "Н/Д";
   el.metricVerdict.className    = "metric-value";
-  el.metricRisk.textContent     = message ?? "Backend unreachable";
+  el.metricRisk.textContent     = message ?? "Сервер недоступен";
   el.metricRisk.className       = "metric-value";
   el.confidenceWrap.style.display = "none";
   el.reasonsSection.style.display = "none";
@@ -135,11 +135,11 @@ function renderResult(tabState) {
 
   let cardState, icon, labelText, labelClass, fillClass;
   if (riskLevel === "high") {
-    cardState = "danger";     icon = "🚨"; labelText = "PHISHING DETECTED"; labelClass = "danger"; fillClass = "danger";
+    cardState = "danger";     icon = "🚨"; labelText = "ФИШИНГ ОБНАРУЖЕН";      labelClass = "danger"; fillClass = "danger";
   } else if (riskLevel === "suspicious") {
-    cardState = "suspicious"; icon = "⚠️"; labelText = "SUSPICIOUS SITE";   labelClass = "warn";   fillClass = "warn";
+    cardState = "suspicious"; icon = "⚠️"; labelText = "ПОДОЗРИТЕЛЬНЫЙ САЙТ"; labelClass = "warn";   fillClass = "warn";
   } else {
-    cardState = "safe";       icon = "✔";  labelText = "SAFE";              labelClass = "safe";   fillClass = "safe";
+    cardState = "safe";       icon = "✔";  labelText = "БЕЗОПАСНО";            labelClass = "safe";   fillClass = "safe";
   }
 
   el.resultCard.className  = `result-card ${cardState}`;
@@ -248,7 +248,7 @@ async function loadHistory(force = false) {
       applyHistoryData(historyCache);
     } else {
       showHistoryState("offline");
-      el.historyCount.textContent = "offline";
+      el.historyCount.textContent = "офлайн";
     }
   }
 }
@@ -257,7 +257,7 @@ function applyHistoryData(data) {
   const scans = data?.scans ?? [];
   const total = data?.total ?? 0;
 
-  el.historyCount.textContent = `${total} scan${total !== 1 ? "s" : ""} total`;
+  el.historyCount.textContent = `${total} проверок всего`;
 
   if (scans.length === 0) {
     showHistoryState("empty");
@@ -270,7 +270,7 @@ function applyHistoryData(data) {
 
 el.clearHistoryBtn.addEventListener("click", async () => {
   el.clearHistoryBtn.disabled = true;
-  el.clearHistoryBtn.textContent = "Clearing…";
+  el.clearHistoryBtn.textContent = "Очистка…";
 
   try {
     await fetch(`${BACKEND_BASE}/history`, {
@@ -279,14 +279,14 @@ el.clearHistoryBtn.addEventListener("click", async () => {
     });
     historyCache   = null;
     historyCacheTs = 0;
-    el.historyCount.textContent = "0 scans total";
+    el.historyCount.textContent = "0 проверок всего";
     showHistoryState("empty");
   } catch {
     // Backend unreachable — restore button
   }
 
   el.clearHistoryBtn.disabled = false;
-  el.clearHistoryBtn.textContent = "✕ CLEAR ALL";
+  el.clearHistoryBtn.textContent = "✕ ОЧИСТИТЬ ВСЁ";
 });
 
 // ── Scan tab init ─────────────────────────────────────────────────────────────
@@ -308,7 +308,7 @@ async function init() {
   });
 
   if (!tabState) {
-    renderError("No result yet — navigate to a page first.");
+    renderError("Нет результатов — откройте сайт для проверки.");
     return;
   }
 
@@ -335,7 +335,7 @@ async function init() {
   // Recheck button
   el.recheckBtn.addEventListener("click", async () => {
     el.recheckBtn.disabled = true;
-    el.recheckBtn.textContent = "↺ ANALYSING…";
+    el.recheckBtn.textContent = "↺ АНАЛИЗ…";
     renderChecking();
 
     const response = await chrome.runtime.sendMessage({
@@ -356,11 +356,11 @@ async function init() {
       historyCache   = null;
       historyCacheTs = 0;
     } else {
-      renderError("Recheck failed.");
+      renderError("Ошибка повторной проверки.");
     }
 
     el.recheckBtn.disabled = false;
-    el.recheckBtn.textContent = "↺ RE-ANALYSE URL";
+    el.recheckBtn.textContent = "↺ ПОВТОРНЫЙ АНАЛИЗ";
   });
 
   // Live updates from background

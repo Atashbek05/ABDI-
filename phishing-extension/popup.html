@@ -384,11 +384,11 @@
     <div class="header-icon">🛡</div>
     <div class="header-text">
       <h1>AI PHISHING DETECTOR</h1>
-      <p>Realtime threat protection</p>
+      <p>Защита в реальном времени</p>
     </div>
     <div class="protection-wrap">
-      <span class="protection-label" id="protLabel">ON</span>
-      <label class="toggle-switch" title="Toggle realtime protection">
+      <span class="protection-label" id="protLabel">ВКЛ</span>
+      <label class="toggle-switch" title="Включить/выключить защиту">
         <input type="checkbox" id="protectionToggle" checked />
         <span class="toggle-track"></span>
       </label>
@@ -402,15 +402,15 @@
       <span id="backendLabel">—</span>
     </div>
     <div style="display:flex;gap:4px">
-      <button class="icon-btn" id="openDashboard" title="Analytics Dashboard">📊</button>
-      <button class="icon-btn" id="openSettings"  title="Settings">⚙</button>
+      <button class="icon-btn" id="openDashboard" title="Панель аналитики">📊</button>
+      <button class="icon-btn" id="openSettings"  title="Настройки">⚙</button>
     </div>
   </div>
 
   <!-- ── Tab nav ── -->
   <div class="tab-nav">
-    <button class="tab-btn active" id="tabScan"    data-tab="scan">⚡ SCAN</button>
-    <button class="tab-btn"        id="tabHistory" data-tab="history">📋 HISTORY</button>
+    <button class="tab-btn active" id="tabScan"    data-tab="scan">⚡ СКАНИРОВАНИЕ</button>
+    <button class="tab-btn"        id="tabHistory" data-tab="history">📋 ИСТОРИЯ</button>
   </div>
 
   <!-- ══════════════ SCAN TAB ══════════════ -->
@@ -419,11 +419,11 @@
 
       <!-- Current URL + quick actions -->
       <div class="url-section">
-        <div class="section-label">Current Website</div>
-        <div class="url-text" id="currentUrl">Loading…</div>
+        <div class="section-label">Текущий сайт</div>
+        <div class="url-text" id="currentUrl">Загрузка…</div>
         <div class="quick-actions">
-          <button class="btn-quick bl" id="quickBlacklist" title="Block this domain">🚫 Blacklist</button>
-          <button class="btn-quick wl" id="quickWhitelist" title="Trust this domain">✓ Whitelist</button>
+          <button class="btn-quick bl" id="quickBlacklist" title="Заблокировать этот домен">🚫 Заблокировать</button>
+          <button class="btn-quick wl" id="quickWhitelist" title="Доверять этому домену">✓ Доверять</button>
         </div>
       </div>
 
@@ -431,35 +431,35 @@
       <div class="result-card checking" id="resultCard">
         <div class="status-badge">
           <div class="badge-icon"  id="badgeIcon">⏳</div>
-          <div class="badge-label checking" id="badgeLabel">SCANNING</div>
+          <div class="badge-label checking" id="badgeLabel">СКАНИРОВАНИЕ</div>
           <span class="source-tag ai" id="sourceTag" style="display:none">AI</span>
         </div>
 
         <div class="metrics" id="metricsGrid" style="display:none">
           <div class="metric">
-            <div class="metric-label">AI Verdict</div>
+            <div class="metric-label">Вердикт AI</div>
             <div class="metric-value" id="metricVerdict">—</div>
           </div>
           <div class="metric">
-            <div class="metric-label">Risk Level</div>
+            <div class="metric-label">Уровень риска</div>
             <div class="metric-value" id="metricRisk">—</div>
           </div>
         </div>
 
         <div class="confidence-wrap" id="confidenceWrap" style="display:none">
-          <div class="metric-label">Confidence — <span id="confidenceText">0%</span></div>
+          <div class="metric-label">Уверенность — <span id="confidenceText">0%</span></div>
           <div class="confidence-track">
             <div class="confidence-fill safe" id="confidenceFill" style="width:0%"></div>
           </div>
         </div>
 
         <div class="reasons-section" id="reasonsSection" style="display:none">
-          <div class="section-label" style="margin-bottom:5px">AI Analysis Findings</div>
+          <div class="section-label" style="margin-bottom:5px">Результаты анализа AI</div>
           <ul class="reasons-list" id="reasonsList"></ul>
         </div>
       </div>
 
-      <button class="btn-recheck" id="recheckBtn">↺ RE-ANALYSE URL</button>
+      <button class="btn-recheck" id="recheckBtn">↺ ПОВТОРНЫЙ АНАЛИЗ</button>
     </div>
   </div>
 
@@ -468,20 +468,20 @@
     <div class="body">
 
       <div class="history-controls">
-        <span class="history-count-text" id="historyCount">— scans</span>
-        <button class="btn-clear" id="clearHistoryBtn">✕ CLEAR ALL</button>
+        <span class="history-count-text" id="historyCount">— проверок</span>
+        <button class="btn-clear" id="clearHistoryBtn">✕ ОЧИСТИТЬ ВСЁ</button>
       </div>
 
-      <div id="historyLoading" class="state-msg"><div><span class="spinner"></span>Loading…</div></div>
+      <div id="historyLoading" class="state-msg"><div><span class="spinner"></span>Загрузка…</div></div>
       <div id="historyEmpty"   class="state-msg" hidden>
         <div class="state-msg-icon">📭</div>
-        <div>No scan history yet</div>
-        <div class="state-msg-sub">Sites you visit will appear here</div>
+        <div>История проверок пуста</div>
+        <div class="state-msg-sub">Здесь появятся посещённые сайты</div>
       </div>
       <div id="historyOffline" class="state-msg" hidden>
         <div class="state-msg-icon">🔌</div>
-        <div>Backend offline</div>
-        <div class="state-msg-sub">Start the detection server to view history</div>
+        <div>Сервер недоступен</div>
+        <div class="state-msg-sub">Запустите сервер для просмотра истории</div>
       </div>
       <div id="historyList" class="history-list" hidden></div>
 
@@ -489,7 +489,7 @@
   </div>
 
   <!-- ── Footer ── -->
-  <div class="footer">AI Phishing Detector &bull; Powered by Machine Learning</div>
+  <div class="footer">AI Phishing Detector &bull; На основе машинного обучения</div>
 
   <script src="popup.js"></script>
 </body>

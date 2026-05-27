@@ -5,26 +5,26 @@ const API_BASE = "https://abdi-d1ph.onrender.com/api/v1";
 const $ = (id) => document.getElementById(id);
 
 const THREAT_DISPLAY = {
-  safe: "SAFE",
-  phishing: "Phishing",
-  fake_login: "Fake Login",
-  fake_banking: "Fake Banking",
-  crypto_scam: "Crypto Scam",
-  fake_payment: "Fake Payment",
-  malware: "Malware",
-  scam: "Scam",
-  suspicious_redirect: "Redirect",
-  suspicious: "Suspicious",
+  safe: "БЕЗОПАСНО",
+  phishing: "Фишинг",
+  fake_login: "Фейковый вход",
+  fake_banking: "Фейковый банк",
+  crypto_scam: "Крипто-мошенничество",
+  fake_payment: "Фейковый платёж",
+  malware: "Вредоносное ПО",
+  scam: "Мошенничество",
+  suspicious_redirect: "Перенаправление",
+  suspicious: "Подозрительно",
 };
 
 const STATUS_CONFIG = {
-  safe:     { icon: "🛡️", label: "SECURE",         sub: "No threats detected",        cardClass: "safe",     ringClass: "safe" },
-  low:      { icon: "⚠️", label: "LOW RISK",        sub: "Minor suspicious indicators", cardClass: "low",      ringClass: "danger" },
-  medium:   { icon: "⚠️", label: "MEDIUM RISK",     sub: "Suspicious site detected",   cardClass: "medium",   ringClass: "danger" },
-  high:     { icon: "🚨", label: "HIGH RISK",       sub: "Likely malicious site",      cardClass: "high",     ringClass: "danger" },
-  critical: { icon: "💀", label: "CRITICAL THREAT", sub: "Dangerous site detected",    cardClass: "critical", ringClass: "danger" },
-  scanning: { icon: "🔍", label: "SCANNING",        sub: "Analyzing page...",          cardClass: "",         ringClass: "scanning" },
-  unknown:  { icon: "🔒", label: "STANDBY",         sub: "Enable protection to scan",  cardClass: "",         ringClass: "" },
+  safe:     { icon: "🛡️", label: "БЕЗОПАСНО",       sub: "Угрозы не обнаружены",           cardClass: "safe",     ringClass: "safe" },
+  low:      { icon: "⚠️", label: "НИЗКИЙ РИСК",     sub: "Незначительные подозрения",      cardClass: "low",      ringClass: "danger" },
+  medium:   { icon: "⚠️", label: "СРЕДНИЙ РИСК",    sub: "Обнаружен подозрительный сайт",  cardClass: "medium",   ringClass: "danger" },
+  high:     { icon: "🚨", label: "ВЫСОКИЙ РИСК",    sub: "Вероятно вредоносный сайт",      cardClass: "high",     ringClass: "danger" },
+  critical: { icon: "💀", label: "КРИТИЧЕСКАЯ УГРОЗА", sub: "Обнаружен опасный сайт",      cardClass: "critical", ringClass: "danger" },
+  scanning: { icon: "🔍", label: "СКАНИРОВАНИЕ",    sub: "Анализ страницы...",             cardClass: "",         ringClass: "scanning" },
+  unknown:  { icon: "🔒", label: "ОЖИДАНИЕ",        sub: "Включите защиту для сканирования", cardClass: "",       ringClass: "" },
 };
 
 let currentTab = null;
@@ -36,22 +36,22 @@ let typeTimer = null;
 let inspectStartedAt = 0;
 
 const INSPECTION_STAGES = [
-  "Initializing scan engine...",
-  "Hashing URL signature...",
-  "Querying domain reputation...",
-  "Inspecting page title & meta tags...",
-  "Mapping DOM structure...",
-  "Scanning forms & input fields...",
-  "Probing hidden password fields...",
-  "Detecting iframe injections...",
-  "Analyzing CSS hiding tricks...",
-  "Examining overlays & modals...",
-  "Evaluating submit buttons...",
-  "Profiling credential patterns...",
-  "Comparing brand impersonation...",
-  "Auditing inline scripts...",
-  "Computing visual risk score...",
-  "Aggregating neural threat layers...",
+  "Инициализация движка сканирования...",
+  "Хэширование подписи URL...",
+  "Запрос репутации домена...",
+  "Проверка заголовка и мета-тегов...",
+  "Сканирование структуры DOM...",
+  "Анализ форм и полей ввода...",
+  "Проверка скрытых полей пароля...",
+  "Обнаружение iframe-инъекций...",
+  "Анализ CSS-трюков скрытия...",
+  "Проверка оверлеев и модальных окон...",
+  "Оценка кнопок отправки...",
+  "Профилирование паттернов учётных данных...",
+  "Сравнение имперсонации брендов...",
+  "Аудит встроенных скриптов...",
+  "Вычисление визуальной оценки риска...",
+  "Агрегация нейронных слоёв угроз...",
 ];
 
 // ── Init ─────────────────────────────────────────────────────────────────────
@@ -74,7 +74,7 @@ async function loadCurrentTab() {
   $("protection-toggle").checked = protectionEnabled !== false;
 
   if (!protectionEnabled) {
-    showUnknownState("Protection disabled");
+    showUnknownState("Защита отключена");
     return;
   }
 
@@ -102,7 +102,7 @@ async function loadLastScanFromStorage() {
       return;
     }
   }
-  showUnknownState("Not yet scanned");
+  showUnknownState("Ещё не сканировалось");
 }
 
 async function loadStats() {
@@ -113,7 +113,7 @@ async function loadStats() {
       $("stat-total").textContent = formatNum(stats.total_scans || 0);
       $("stat-threats").textContent = formatNum(stats.threats_detected || 0);
       $("stat-rate").textContent = (stats.detection_rate || 0).toFixed(1) + "%";
-      $("footer-status").innerHTML = `<span class="dot dot-green"></span> Engine Active`;
+      $("footer-status").innerHTML = `<span class="dot dot-green"></span> Движок активен`;
       return;
     }
   } catch (_) {}
@@ -121,7 +121,7 @@ async function loadStats() {
   const data = await chrome.storage.local.get(["totalScans", "totalThreats"]);
   $("stat-total").textContent = formatNum(data.totalScans || 0);
   $("stat-threats").textContent = formatNum(data.totalThreats || 0);
-  $("footer-status").innerHTML = `<span class="dot dot-yellow"></span> Offline Mode`;
+  $("footer-status").innerHTML = `<span class="dot dot-yellow"></span> Режим офлайн`;
 }
 
 // ── Display ──────────────────────────────────────────────────────────────────
@@ -214,12 +214,12 @@ const MODEL_DISPLAY = {
 };
 
 const SCORE_DISPLAY = {
-  phishing_probability:      "Phishing",
-  malware_probability:       "Malware",
-  impersonation_risk:        "Impersonation",
-  credential_theft_risk:     "Credential Theft",
-  redirect_abuse_risk:       "Redirect Abuse",
-  suspicious_behavior_score: "Suspicious Behavior",
+  phishing_probability:      "Фишинг",
+  malware_probability:       "Вредоносное ПО",
+  impersonation_risk:        "Имперсонация",
+  credential_theft_risk:     "Кража учётных данных",
+  redirect_abuse_risk:       "Злоупотребление перенаправлением",
+  suspicious_behavior_score: "Подозрительное поведение",
 };
 
 function renderAIPanel(result) {
@@ -242,10 +242,10 @@ function renderAIPanel(result) {
   const statusEl = $("ai-engine-status");
   if (statusEl) {
     if (status === "ml") {
-      statusEl.textContent = `${Object.keys(models).length} MODELS · LIVE`;
+      statusEl.textContent = `${Object.keys(models).length} МОДЕЛИ · ОНЛАЙН`;
       statusEl.className = "ai-panel-status live";
     } else {
-      statusEl.textContent = "ENSEMBLE · STANDBY";
+      statusEl.textContent = "АНСАМБЛЬ · ОЖИДАНИЕ";
       statusEl.className = "ai-panel-status standby";
     }
   }
@@ -346,11 +346,11 @@ function animateAIMeter(targetPct) {
 
   // Caption text adapts to severity for that "realtime scoring" feel
   if (caption) {
-    if (targetPct >= 80)      caption.textContent = "CRITICAL THREAT DETECTED";
-    else if (targetPct >= 60) caption.textContent = "HIGH RISK · BLOCK RECOMMENDED";
-    else if (targetPct >= 40) caption.textContent = "ELEVATED RISK · CAUTION";
-    else if (targetPct >= 20) caption.textContent = "LOW RISK · MONITORING";
-    else                       caption.textContent = "THREAT PROBABILITY";
+    if (targetPct >= 80)      caption.textContent = "КРИТИЧЕСКАЯ УГРОЗА ОБНАРУЖЕНА";
+    else if (targetPct >= 60) caption.textContent = "ВЫСОКИЙ РИСК · РЕКОМЕНДУЕТСЯ БЛОКИРОВКА";
+    else if (targetPct >= 40) caption.textContent = "ПОВЫШЕННЫЙ РИСК · ОСТОРОЖНО";
+    else if (targetPct >= 20) caption.textContent = "НИЗКИЙ РИСК · МОНИТОРИНГ";
+    else                       caption.textContent = "ВЕРОЯТНОСТЬ УГРОЗЫ";
   }
 }
 
@@ -368,7 +368,7 @@ function showScanningState() {
   $("scan-anim").className = "scan-anim active";
   $("status-icon").textContent = "🔍";
   $("status-ring").className = "status-ring scanning";
-  $("status-label").textContent = "SCANNING";
+  $("status-label").textContent = "СКАНИРОВАНИЕ";
   $("fake-login-banner").style.display = "none";
   $("risk-section").style.display = "none";
   $("details-grid").style.display = "none";
@@ -432,7 +432,7 @@ function stopInspectionAnimation() {
   const stream = $("inspect-stream");
   if (stream) stream.style.display = "none";
   const subText = $("status-sub-text");
-  if (subText) subText.textContent = "Analyzing page...";
+  if (subText) subText.textContent = "Анализ страницы...";
 }
 
 // Typewriter effect for the status card's sub-text
@@ -466,7 +466,7 @@ function showUnknownState(message) {
   $("scan-anim").className = "scan-anim";
   $("status-icon").textContent = "🔒";
   $("status-ring").className = "status-ring";
-  $("status-label").textContent = "STANDBY";
+  $("status-label").textContent = "ОЖИДАНИЕ";
   const subText = $("status-sub-text");
   if (subText) subText.textContent = message;
   else $("status-sub").textContent = message;
@@ -509,10 +509,10 @@ function renderPageAnalysis(pa, riskLevel) {
   // Build header badges
   const badgesEl = $("pa-badges");
   badgesEl.innerHTML = "";
-  if (pa.fake_login_detected) badgesEl.innerHTML += `<span class="pa-badge warn">FAKE LOGIN</span>`;
-  if (pa.cloned_page_detected) badgesEl.innerHTML += `<span class="pa-badge warn">CLONED PAGE</span>`;
-  if (pa.hidden_iframes > 0) badgesEl.innerHTML += `<span class="pa-badge warn">HIDDEN IFRAME</span>`;
-  if (pa.css_tricks_detected) badgesEl.innerHTML += `<span class="pa-badge info">CSS TRICKS</span>`;
+  if (pa.fake_login_detected) badgesEl.innerHTML += `<span class="pa-badge warn">ФЕЙК. ВХОД</span>`;
+  if (pa.cloned_page_detected) badgesEl.innerHTML += `<span class="pa-badge warn">КЛОН СТРАНИЦЫ</span>`;
+  if (pa.hidden_iframes > 0) badgesEl.innerHTML += `<span class="pa-badge warn">СКРЫТЫЙ IFRAME</span>`;
+  if (pa.css_tricks_detected) badgesEl.innerHTML += `<span class="pa-badge info">CSS ТРЮКИ</span>`;
 
   // Visual risk score bars (animate after reveal)
   renderScoreBar("pa-login-bar", "pa-login-val", pa.login_risk);
@@ -588,23 +588,23 @@ function buildStructuralIndicators(pa) {
     items.push({ icon: "📄", label: `${pa.suspicious_overlays} overlay`, cls: "warn" });
   }
   if (pa.css_tricks_detected) {
-    items.push({ icon: "🎨", label: "CSS tricks", cls: "warn" });
+    items.push({ icon: "🎨", label: "CSS трюки", cls: "warn" });
   }
   if (pa.iframe_count > 3) {
     items.push({ icon: "🖼", label: `${pa.iframe_count} iframes`, cls: "warn" });
   }
   if (pa.fake_login_detected) {
-    items.push({ icon: "🔑", label: "Fake login", cls: "threat" });
+    items.push({ icon: "🔑", label: "Фейковый вход", cls: "threat" });
   }
   if (pa.cloned_page_detected) {
-    items.push({ icon: "📋", label: "Cloned page", cls: "threat" });
+    items.push({ icon: "📋", label: "Клонированная страница", cls: "threat" });
   }
   if (pa.suspicious_buttons?.length > 0) {
     items.push({ icon: "🔘", label: `${pa.suspicious_buttons.length} sus. button`, cls: "warn" });
   }
 
   if (items.length === 0) {
-    items.push({ icon: "✓", label: "DOM looks clean", cls: "ok" });
+    items.push({ icon: "✓", label: "DOM чист", cls: "ok" });
   }
 
   return items;
@@ -660,7 +660,7 @@ function setupListeners() {
   $("protection-toggle").addEventListener("change", async (e) => {
     await chrome.storage.local.set({ protectionEnabled: e.target.checked });
     if (!e.target.checked) {
-      showUnknownState("Protection disabled");
+      showUnknownState("Защита отключена");
     } else {
       showScanningState();
       if (currentTab) {
@@ -690,10 +690,10 @@ function setupListeners() {
         body: JSON.stringify({ domain, reason: "User trusted" }),
       });
       if (resp.ok || resp.status === 409) {
-        $("whitelist-btn").textContent = "✅ Trusted!";
+        $("whitelist-btn").textContent = "✅ Доверяем!";
         $("whitelist-btn").disabled = true;
         setTimeout(() => {
-          $("whitelist-btn").textContent = "✅ Trust Site";
+          $("whitelist-btn").textContent = "✅ Доверять сайту";
           $("whitelist-btn").disabled = false;
         }, 2000);
       }
@@ -704,15 +704,15 @@ function setupListeners() {
   $("report-btn").addEventListener("click", () => {
     if (currentResult) {
       const pa = currentResult.page_analysis;
-      let text = `URL: ${currentResult.url}\nThreat: ${currentResult.threat_type}\nConfidence: ${currentResult.confidence}%`;
-      if (currentResult.fake_login_detected) text += "\n⚠ FAKE LOGIN DETECTED";
-      if (pa?.cloned_page_detected) text += "\n⚠ CLONED PAGE DETECTED";
+      let text = `URL: ${currentResult.url}\nУгроза: ${currentResult.threat_type}\nУверенность: ${currentResult.confidence}%`;
+      if (currentResult.fake_login_detected) text += "\n⚠ ОБНАРУЖЕН ФЕЙКОВЫЙ ВХОД";
+      if (pa?.cloned_page_detected) text += "\n⚠ ОБНАРУЖЕНА КЛОНИРОВАННАЯ СТРАНИЦА";
       if (pa?.credential_harvesting_patterns?.length) {
-        text += `\nCredential patterns: ${pa.credential_harvesting_patterns.join(", ")}`;
+        text += `\nПаттерны учётных данных: ${pa.credential_harvesting_patterns.join(", ")}`;
       }
       navigator.clipboard?.writeText(text);
-      $("report-btn").textContent = "📋 Copied!";
-      setTimeout(() => { $("report-btn").textContent = "🚩 Report"; }, 2000);
+      $("report-btn").textContent = "📋 Скопировано!";
+      setTimeout(() => { $("report-btn").textContent = "🚩 Сообщить"; }, 2000);
     }
   });
 

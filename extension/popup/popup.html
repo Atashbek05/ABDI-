@@ -18,7 +18,7 @@
         </svg>
         <div class="logo-text">
           <span class="logo-title">CyberShield</span>
-          <span class="logo-sub">AI PROTECTION</span>
+          <span class="logo-sub">AI ЗАЩИТА</span>
         </div>
       </div>
       <div class="header-right">
@@ -28,7 +28,7 @@
             <span class="slider"></span>
           </label>
         </div>
-        <button class="icon-btn" id="settings-btn" title="Settings" aria-label="Settings">
+        <button class="icon-btn" id="settings-btn" title="Настройки" aria-label="Настройки">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
         </button>
       </div>
@@ -59,10 +59,10 @@
         </div>
       </div>
       <div class="status-info">
-        <div class="status-label" id="status-label">SCANNING</div>
-        <div class="status-domain" id="status-domain">Loading...</div>
+        <div class="status-label" id="status-label">СКАНИРОВАНИЕ</div>
+        <div class="status-domain" id="status-domain">Загрузка...</div>
         <div class="status-sub" id="status-sub">
-          <span id="status-sub-text">Analyzing page...</span><span class="caret" id="status-caret">&#9612;</span>
+          <span id="status-sub-text">Анализ страницы...</span><span class="caret" id="status-caret">&#9612;</span>
         </div>
       </div>
     </div>
@@ -71,7 +71,7 @@
     <div class="inspect-stream" id="inspect-stream" style="display:none" aria-live="polite">
       <div class="inspect-stream-head">
         <span class="is-dot"></span>
-        <span class="is-label">REALTIME INSPECTION</span>
+        <span class="is-label">ПРОВЕРКА В РЕАЛЬНОМ ВРЕМЕНИ</span>
         <span class="is-spinner"></span>
       </div>
       <ul class="inspect-stream-list" id="inspect-stream-list"></ul>
@@ -81,45 +81,45 @@
     <div class="fake-login-banner" id="fake-login-banner" style="display:none">
       <svg class="flb-icon" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
       <div class="flb-text">
-        <div class="flb-title">FAKE LOGIN PAGE DETECTED</div>
-        <div class="flb-sub">Do not enter your credentials on this page</div>
+        <div class="flb-title">ОБНАРУЖЕНА ПОДДЕЛЬНАЯ СТРАНИЦА ВХОДА</div>
+        <div class="flb-sub">Не вводите ваши данные на этой странице</div>
       </div>
     </div>
 
     <!-- Risk meter -->
     <div class="section" id="risk-section" style="display:none">
-      <div class="section-label">RISK SCORE</div>
+      <div class="section-label">ОЦЕНКА РИСКА</div>
       <div class="risk-bar-wrap">
         <div class="risk-bar-bg">
           <div class="risk-bar-fill" id="risk-bar-fill"></div>
         </div>
         <div class="risk-bar-labels">
-          <span>SAFE</span><span>LOW</span><span>MEDIUM</span><span>HIGH</span><span>CRITICAL</span>
+          <span>БЕЗОП.</span><span>НИЗКИЙ</span><span>СРЕДНИЙ</span><span>ВЫСОКИЙ</span><span>КРИТИЧ.</span>
         </div>
       </div>
       <div class="risk-score-row">
         <span class="risk-score-num" id="risk-score-num">0</span>
         <span class="risk-score-label">/ 100</span>
-        <span class="risk-level-badge" id="risk-level-badge">SAFE</span>
+        <span class="risk-level-badge" id="risk-level-badge">БЕЗОПАСНО</span>
       </div>
     </div>
 
     <!-- Scan details -->
     <div class="details-grid" id="details-grid" style="display:none">
       <div class="detail-item">
-        <div class="detail-label">THREAT TYPE</div>
+        <div class="detail-label">ТИП УГРОЗЫ</div>
         <div class="detail-value" id="d-threat-type">—</div>
       </div>
       <div class="detail-item">
-        <div class="detail-label">AI CONFIDENCE</div>
+        <div class="detail-label">УВЕРЕННОСТЬ AI</div>
         <div class="detail-value" id="d-confidence">—</div>
       </div>
       <div class="detail-item">
-        <div class="detail-label">SCAN TIME</div>
+        <div class="detail-label">ВРЕМЯ ПРОВЕРКИ</div>
         <div class="detail-value" id="d-scan-time">—</div>
       </div>
       <div class="detail-item">
-        <div class="detail-label">VISUAL RISK</div>
+        <div class="detail-label">ВИЗУАЛЬНЫЙ РИСК</div>
         <div class="detail-value" id="d-visual-risk">—</div>
       </div>
     </div>
@@ -128,8 +128,8 @@
     <div class="ai-panel" id="ai-panel" style="display:none">
       <div class="ai-panel-head">
         <span class="ai-pulse"></span>
-        <span class="ai-panel-title">AI ENSEMBLE</span>
-        <span class="ai-panel-status" id="ai-engine-status">4 MODELS · ACTIVE</span>
+        <span class="ai-panel-title">AI АНСАМБЛЬ</span>
+        <span class="ai-panel-status" id="ai-engine-status">4 МОДЕЛИ · АКТИВНО</span>
       </div>
 
       <!-- Animated AI risk meter -->
@@ -150,7 +150,7 @@
           <span class="ai-meter-num" id="ai-meter-num">0</span>
           <span class="ai-meter-suffix">%</span>
         </div>
-        <div class="ai-meter-caption" id="ai-meter-caption">THREAT PROBABILITY</div>
+        <div class="ai-meter-caption" id="ai-meter-caption">ВЕРОЯТНОСТЬ УГРОЗЫ</div>
       </div>
 
       <!-- Per-model breakdown -->
@@ -162,15 +162,15 @@
       <!-- Ensemble decision footer -->
       <div class="ai-decision">
         <div class="ai-decision-item">
-          <span class="ai-decision-label">PREDICTION</span>
+          <span class="ai-decision-label">ПРОГНОЗ</span>
           <span class="ai-decision-value" id="ai-prediction">—</span>
         </div>
         <div class="ai-decision-item">
-          <span class="ai-decision-label">CONFIDENCE</span>
+          <span class="ai-decision-label">УВЕРЕННОСТЬ</span>
           <span class="ai-decision-value" id="ai-confidence">—</span>
         </div>
         <div class="ai-decision-item">
-          <span class="ai-decision-label">AGREEMENT</span>
+          <span class="ai-decision-label">СОГЛАСОВАННОСТЬ</span>
           <span class="ai-decision-value" id="ai-agreement">—</span>
         </div>
       </div>
@@ -180,7 +180,7 @@
     <div class="page-analysis-panel" id="page-analysis-panel" style="display:none">
       <div class="pa-header" id="pa-toggle" role="button" tabindex="0" aria-expanded="false">
         <svg class="pa-header-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z"/><path d="M14 2v6h6"/><circle cx="10" cy="16" r="2"/><path d="M10 18l-2 2"/></svg>
-        <span class="pa-header-title">PAGE ANALYSIS</span>
+        <span class="pa-header-title">АНАЛИЗ СТРАНИЦЫ</span>
         <span class="pa-badges" id="pa-badges"></span>
         <span class="pa-chevron" id="pa-chevron">&#9662;</span>
       </div>
@@ -189,21 +189,21 @@
         <!-- Visual risk scores -->
         <div class="pa-scores">
           <div class="pa-score-row">
-            <span class="pa-score-label">Login Risk</span>
+            <span class="pa-score-label">Риск входа</span>
             <div class="pa-score-bar-bg">
               <div class="pa-score-bar-fill" id="pa-login-bar"></div>
             </div>
             <span class="pa-score-val" id="pa-login-val">0%</span>
           </div>
           <div class="pa-score-row">
-            <span class="pa-score-label">Impersonation</span>
+            <span class="pa-score-label">Имперсонация</span>
             <div class="pa-score-bar-bg">
               <div class="pa-score-bar-fill" id="pa-imp-bar"></div>
             </div>
             <span class="pa-score-val" id="pa-imp-val">0%</span>
           </div>
           <div class="pa-score-row">
-            <span class="pa-score-label">Cred. Theft</span>
+            <span class="pa-score-label">Кража данных</span>
             <div class="pa-score-bar-bg">
               <div class="pa-score-bar-fill" id="pa-cred-bar"></div>
             </div>
@@ -216,13 +216,13 @@
 
         <!-- Credential harvesting patterns -->
         <div class="pa-patterns" id="pa-patterns" style="display:none">
-          <div class="pa-sub-label">CREDENTIAL HARVESTING PATTERNS</div>
+          <div class="pa-sub-label">ПАТТЕРНЫ КРАЖИ ДАННЫХ</div>
           <ul class="pa-list" id="pa-patterns-list"></ul>
         </div>
 
         <!-- Impersonation signals -->
         <div class="pa-impers" id="pa-impers" style="display:none">
-          <div class="pa-sub-label">IMPERSONATION SIGNALS</div>
+          <div class="pa-sub-label">СИГНАЛЫ ИМПЕРСОНАЦИИ</div>
           <ul class="pa-list" id="pa-impers-list"></ul>
         </div>
 
@@ -231,7 +231,7 @@
 
     <!-- Threat reasons -->
     <div class="reasons-section" id="reasons-section" style="display:none">
-      <div class="section-label">THREAT INDICATORS</div>
+      <div class="section-label">ПРИЗНАКИ УГРОЗЫ</div>
       <ul class="reasons-list" id="reasons-list"></ul>
     </div>
 
@@ -244,15 +244,15 @@
     <div class="actions" id="actions-section" style="display:none">
       <button class="action-btn action-rescan" id="rescan-btn">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
-        Rescan
+        Пересканировать
       </button>
       <button class="action-btn action-whitelist" id="whitelist-btn">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"/></svg>
-        Trust Site
+        Доверять сайту
       </button>
       <button class="action-btn action-report" id="report-btn">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>
-        Report
+        Сообщить
       </button>
     </div>
 
@@ -260,28 +260,28 @@
     <div class="stats-bar">
       <div class="stat-item">
         <div class="stat-num" id="stat-total">0</div>
-        <div class="stat-lbl">Scanned</div>
+        <div class="stat-lbl">Проверено</div>
       </div>
       <div class="stat-sep"></div>
       <div class="stat-item">
         <div class="stat-num threat" id="stat-threats">0</div>
-        <div class="stat-lbl">Threats</div>
+        <div class="stat-lbl">Угроз</div>
       </div>
       <div class="stat-sep"></div>
       <div class="stat-item">
         <div class="stat-num" id="stat-rate">0%</div>
-        <div class="stat-lbl">Block Rate</div>
+        <div class="stat-lbl">Уровень блок.</div>
       </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
       <span class="footer-status" id="footer-status">
-        <span class="dot dot-green"></span> Engine Active
+        <span class="dot dot-green"></span> Движок активен
       </span>
       <button class="footer-link" id="dashboard-btn">
         <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
-        Dashboard
+        Панель управления
       </button>
     </footer>
 

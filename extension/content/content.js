@@ -355,17 +355,17 @@
     };
     const color = riskColors[result.risk_level] || "#ff4400";
     const threatNames = {
-      phishing: "PHISHING ATTACK",
-      fake_login: "FAKE LOGIN PAGE",
-      fake_banking: "FAKE BANKING SITE",
-      crypto_scam: "CRYPTOCURRENCY SCAM",
-      fake_payment: "FAKE PAYMENT GATEWAY",
-      malware: "MALWARE DISTRIBUTION",
-      scam: "SCAM WEBSITE",
-      suspicious_redirect: "SUSPICIOUS REDIRECT",
-      suspicious: "SUSPICIOUS CONTENT",
+      phishing: "ФИШИНГОВАЯ АТАКА",
+      fake_login: "ПОДДЕЛЬНАЯ СТРАНИЦА ВХОДА",
+      fake_banking: "ПОДДЕЛЬНЫЙ БАНКОВСКИЙ САЙТ",
+      crypto_scam: "КРИПТОВАЛЮТНОЕ МОШЕННИЧЕСТВО",
+      fake_payment: "ПОДДЕЛЬНЫЙ ПЛАТЁЖНЫЙ ШЛЮЗ",
+      malware: "РАСПРОСТРАНЕНИЕ ВРЕДОНОСНОГО ПО",
+      scam: "МОШЕННИЧЕСКИЙ САЙТ",
+      suspicious_redirect: "ПОДОЗРИТЕЛЬНОЕ ПЕРЕНАПРАВЛЕНИЕ",
+      suspicious: "ПОДОЗРИТЕЛЬНОЕ СОДЕРЖИМОЕ",
     };
-    const threatName = threatNames[result.threat_type] || "SECURITY THREAT";
+    const threatName = threatNames[result.threat_type] || "УГРОЗА БЕЗОПАСНОСТИ";
 
     const host = document.createElement("div");
     host.id = "cybershield-host";
@@ -416,24 +416,24 @@
 
     const pa = result.page_analysis || {};
     const fakeLoginBanner = (result.fake_login_detected || pa.fake_login_detected)
-      ? `<div class="fake-login-warn">⚠ FAKE LOGIN PAGE DETECTED — Do not enter your credentials</div>`
+      ? `<div class="fake-login-warn">⚠ ОБНАРУЖЕНА ПОДДЕЛЬНАЯ СТРАНИЦА ВХОДА — Не вводите ваши данные</div>`
       : "";
 
     const visualScores = (pa && (pa.login_risk > 0 || pa.impersonation_risk > 0 || pa.credential_theft_probability > 0))
       ? `<div class="visual-scores">
-           <div class="vs-label">VISUAL THREAT ANALYSIS</div>
+           <div class="vs-label">ВИЗУАЛЬНЫЙ АНАЛИЗ УГРОЗ</div>
            <div class="vs-row">
-             <span class="vs-name">Login Risk</span>
+             <span class="vs-name">Риск входа</span>
              <div class="vs-bar-bg"><div class="vs-bar-fill" id="cs-login-bar" style="--c:${color}"></div></div>
              <span class="vs-val">${Math.round(pa.login_risk || 0)}%</span>
            </div>
            <div class="vs-row">
-             <span class="vs-name">Impersonation</span>
+             <span class="vs-name">Имперсонация</span>
              <div class="vs-bar-bg"><div class="vs-bar-fill" id="cs-imp-bar" style="--c:${color}"></div></div>
              <span class="vs-val">${Math.round(pa.impersonation_risk || 0)}%</span>
            </div>
            <div class="vs-row">
-             <span class="vs-name">Cred. Theft</span>
+             <span class="vs-name">Кража данных</span>
              <div class="vs-bar-bg"><div class="vs-bar-fill" id="cs-cred-bar" style="--c:${color}"></div></div>
              <span class="vs-val">${Math.round(pa.credential_theft_probability || 0)}%</span>
            </div>
@@ -537,21 +537,21 @@
           <div class="scanline"></div>
           <span class="shield-icon">🛡️</span>
           <div class="threat-badge">⚠ ${threatName}</div>
-          <div class="title">Threat Detected</div>
+          <div class="title">Угроза обнаружена</div>
           <div class="divider"></div>
           <div class="domain">🌐 ${escapeHtml(result.domain || result.url || "")}</div>
           ${fakeLoginBanner}
           <div class="confidence-label">
-            <span>AI RISK SCORE</span>
-            <span class="conf-val">${result.confidence.toFixed(1)}% CONFIDENCE</span>
+            <span>ОЦЕНКА РИСКА AI</span>
+            <span class="conf-val">${result.confidence.toFixed(1)}% УВЕРЕННОСТЬ</span>
           </div>
           <div class="bar-bg"><div class="bar-fill" id="cs-bar-fill"></div></div>
           ${visualScores}
           ${reasonsHtml}
           <div class="explanation">${escapeHtml(result.explanation || "")}</div>
           <div class="actions">
-            <button class="btn btn-back" id="cs-back-btn">← Go Back (Safe)</button>
-            <button class="btn btn-proceed" id="cs-proceed-btn">Proceed Anyway</button>
+            <button class="btn btn-back" id="cs-back-btn">← Вернуться (безопасно)</button>
+            <button class="btn btn-proceed" id="cs-proceed-btn">Продолжить всё равно</button>
           </div>
         </div>
       </div>

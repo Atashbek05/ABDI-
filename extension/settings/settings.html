@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CyberShield AI — Settings</title>
+  <title>CyberShield AI — Настройки</title>
   <link rel="stylesheet" href="settings.css" />
 </head>
 <body>
@@ -14,22 +14,22 @@
         <span class="logo-icon">🛡️</span>
         <div>
           <div class="page-title">CyberShield AI</div>
-          <div class="page-sub">PROTECTION SETTINGS</div>
+          <div class="page-sub">НАСТРОЙКИ ЗАЩИТЫ</div>
         </div>
       </div>
-      <button class="back-btn" onclick="window.history.back()">← Back</button>
+      <button class="back-btn" onclick="window.history.back()">← Назад</button>
     </header>
 
     <main class="settings-body">
 
       <!-- Core Protection -->
       <section class="settings-section">
-        <div class="section-title">⚡ Core Protection</div>
+        <div class="section-title">⚡ Основная защита</div>
         <div class="settings-group">
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-name">Real-time Protection</div>
-              <div class="setting-desc">Automatically scan every website you visit</div>
+              <div class="setting-name">Защита в реальном времени</div>
+              <div class="setting-desc">Автоматически проверять каждый посещаемый сайт</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="s-protection" checked />
@@ -38,8 +38,8 @@
           </div>
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-name">Real-time Scanning</div>
-              <div class="setting-desc">Scan page content as it loads</div>
+              <div class="setting-name">Сканирование в реальном времени</div>
+              <div class="setting-desc">Сканировать содержимое страницы при загрузке</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="s-realtime" checked />
@@ -48,8 +48,8 @@
           </div>
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-name">Auto-Block Dangerous Sites</div>
-              <div class="setting-desc">Automatically block critical and high-risk threats</div>
+              <div class="setting-name">Автоблокировка опасных сайтов</div>
+              <div class="setting-desc">Автоматически блокировать критические и высокорисковые угрозы</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="s-autoblock" />
@@ -58,8 +58,8 @@
           </div>
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-name">Desktop Notifications</div>
-              <div class="setting-desc">Show alerts when threats are detected</div>
+              <div class="setting-name">Уведомления на рабочем столе</div>
+              <div class="setting-desc">Показывать уведомления при обнаружении угроз</div>
             </div>
             <label class="toggle">
               <input type="checkbox" id="s-notifications" checked />
@@ -71,28 +71,28 @@
 
       <!-- Detection settings -->
       <section class="settings-section">
-        <div class="section-title">🎯 Detection Settings</div>
+        <div class="section-title">🎯 Настройки обнаружения</div>
         <div class="settings-group">
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-name">Detection Sensitivity</div>
-              <div class="setting-desc">Higher = more alerts (may increase false positives)</div>
+              <div class="setting-name">Чувствительность обнаружения</div>
+              <div class="setting-desc">Выше = больше уведомлений (возможны ложные срабатывания)</div>
             </div>
             <select class="setting-select" id="s-sensitivity">
-              <option value="low">Low</option>
-              <option value="medium" selected>Medium</option>
-              <option value="high">High</option>
-              <option value="paranoid">Paranoid</option>
+              <option value="low">Низкая</option>
+              <option value="medium" selected>Средняя</option>
+              <option value="high">Высокая</option>
+              <option value="paranoid">Параноидальная</option>
             </select>
           </div>
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-name">Scan Mode</div>
-              <div class="setting-desc">Full = URL + content analysis; Fast = URL only</div>
+              <div class="setting-name">Режим сканирования</div>
+              <div class="setting-desc">Полный = URL + анализ содержимого; Быстрый = только URL</div>
             </div>
             <select class="setting-select" id="s-scan-mode">
-              <option value="url">URL Only (Fast)</option>
-              <option value="full" selected>Full Analysis</option>
+              <option value="url">Только URL (Быстро)</option>
+              <option value="full" selected>Полный анализ</option>
             </select>
           </div>
         </div>
@@ -100,47 +100,47 @@
 
       <!-- Whitelist -->
       <section class="settings-section">
-        <div class="section-title">✅ Trusted Sites (Whitelist)</div>
+        <div class="section-title">✅ Доверенные сайты (Белый список)</div>
         <div class="settings-group">
           <div class="domain-add-row">
             <input class="domain-input" type="text" id="whitelist-input" placeholder="example.com" />
-            <button class="add-btn add-white" id="whitelist-add-btn">+ Add</button>
+            <button class="add-btn add-white" id="whitelist-add-btn">+ Добавить</button>
           </div>
           <div class="domain-list" id="whitelist-list">
-            <div class="list-empty">No trusted sites added</div>
+            <div class="list-empty">Доверенные сайты не добавлены</div>
           </div>
         </div>
       </section>
 
       <!-- Blacklist -->
       <section class="settings-section">
-        <div class="section-title">🚫 Blocked Sites (Blacklist)</div>
+        <div class="section-title">🚫 Заблокированные сайты (Чёрный список)</div>
         <div class="settings-group">
           <div class="domain-add-row">
             <input class="domain-input" type="text" id="blacklist-input" placeholder="malicious.com" />
-            <button class="add-btn add-black" id="blacklist-add-btn">+ Block</button>
+            <button class="add-btn add-black" id="blacklist-add-btn">+ Блокировать</button>
           </div>
           <div class="domain-list" id="blacklist-list">
-            <div class="list-empty">No blocked sites added</div>
+            <div class="list-empty">Заблокированные сайты не добавлены</div>
           </div>
         </div>
       </section>
 
       <!-- Advanced -->
       <section class="settings-section">
-        <div class="section-title">🔧 Advanced</div>
+        <div class="section-title">🔧 Дополнительно</div>
         <div class="settings-group">
           <div class="setting-row">
             <div class="setting-info">
-              <div class="setting-name">API Server</div>
-              <div class="setting-desc">Backend server address</div>
+              <div class="setting-name">API-сервер</div>
+              <div class="setting-desc">Адрес сервера</div>
             </div>
             <input class="setting-input" type="text" id="s-api-url" value="https://abdi-d1ph.onrender.com" />
           </div>
           <div class="action-row">
-            <button class="action-btn test-btn" id="test-connection-btn">🔗 Test Connection</button>
-            <button class="action-btn danger-btn" id="clear-history-btn">🗑 Clear History</button>
-            <button class="action-btn export-btn" id="export-btn">📤 Export Report</button>
+            <button class="action-btn test-btn" id="test-connection-btn">🔗 Проверить подключение</button>
+            <button class="action-btn danger-btn" id="clear-history-btn">🗑 Очистить историю</button>
+            <button class="action-btn export-btn" id="export-btn">📤 Экспорт отчёта</button>
           </div>
           <div class="connection-status" id="connection-status"></div>
         </div>
@@ -150,7 +150,7 @@
 
     <div class="save-bar">
       <span id="save-msg" class="save-msg"></span>
-      <button class="save-btn" id="save-btn">💾 Save Settings</button>
+      <button class="save-btn" id="save-btn">💾 Сохранить настройки</button>
     </div>
 
   </div>
