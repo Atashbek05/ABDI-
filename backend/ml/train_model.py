@@ -41,7 +41,10 @@ from sklearn.metrics import (
     confusion_matrix,
 )
 
-from ml.feature_extractor import FeatureExtractor
+try:
+    from ml.feature_extractor import FeatureExtractor
+except ImportError:
+    from feature_extractor import FeatureExtractor
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
